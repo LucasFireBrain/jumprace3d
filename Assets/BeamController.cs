@@ -23,7 +23,7 @@ public class BeamController : MonoBehaviour
     {
         _ray = new Ray(BeamOrigin.position, Vector3.down);
         //Check floor below player
-        if (Physics.Raycast(_ray, out _hit, 100)) {
+        if (Physics.Raycast(_ray, out _hit, Mathf.Infinity)) {
             if (_hit.collider.GetComponent<Platform>())
             {
                 Debug.Log("HIT PLATFORM");
@@ -41,6 +41,7 @@ public class BeamController : MonoBehaviour
             {
                 //Is not over platform, turn red.
                 ChangeColor(0);
+                SetBeamSize(_hit.point, BeamOrigin.position);
             }
         }
         else {

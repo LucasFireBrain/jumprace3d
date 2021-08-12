@@ -18,6 +18,7 @@ public class Platform : MonoBehaviour
 
     protected virtual void Bounce(Player player) {
         player.BounceUp();
+        Debug.Log("Collided with " + player.name);
     }
 
     void OnCollisionEnter(Collision collision) {

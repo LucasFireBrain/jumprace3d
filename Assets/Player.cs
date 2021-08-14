@@ -8,7 +8,8 @@ public class Player : MonoBehaviour
     private Rigidbody _rigidbody;
 
     [SerializeField]
-    private float _speed = 1;
+    private float _speed = 2;
+    private float _jumpHeight = 7;
 
     private Vector2 _previousTouchPos;
 
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 2;
     }
 
     // Update is called once per frame
@@ -43,6 +45,6 @@ public class Player : MonoBehaviour
 
     public void BounceUp() {
         //Apply force upwards.
-        _rigidbody.velocity = _rigidbody.velocity.withY(7);
+        _rigidbody.velocity = Vector3.up * _jumpHeight;
     }
 }

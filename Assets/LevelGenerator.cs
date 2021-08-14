@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    public static Transform StartingPlatform;
+
     public GameObject PlatformPrefab;
     public GameObject GoalPrefab;
-    public static Transform StartingPlatform;
+    public LineRenderer Line;
 
     private int _platformCount = 20;
     private float _gapSize = 4f;
@@ -28,7 +30,9 @@ public class LevelGenerator : MonoBehaviour
 
 
     void GenerateLevel() {
-        
+
+        Line.positionCount = _platformCount;
+
         for (int i = 0; i < _platformCount; i++)
         {
 
@@ -39,6 +43,7 @@ public class LevelGenerator : MonoBehaviour
                 platform.position = _previousPlatform.position + _previousPlatform.forward * _gapSize;
                 int angle = _rand.Next(-35, 35);
                 platform.Rotate(Vector3.up, angle);
+                _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
             }
             else {
                 //Set starting platform
@@ -46,8 +51,11 @@ public class LevelGenerator : MonoBehaviour
             }
             //Start high up and set goal near the water.
             platform.position = platform.position.withY((_platformCount - i) * _slope);
-            _previousPlatform = platform;
 
+            Line.SetPosition(i, platform.position);
+
+            //Prepare for next iteration
+            _previousPlatform = platform;
         }
     }
     // Update is called once per frame

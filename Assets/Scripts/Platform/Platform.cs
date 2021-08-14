@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Platform : MonoBehaviour
 {
+    //Linked List
+    public Platform Next;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +25,10 @@ public class Platform : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision) {
-        if (collision.rigidbody.GetComponent<Player>() != null) { 
-            Bounce(collision.rigidbody.GetComponent<Player>());
+        Player player = collision.rigidbody.GetComponent<Player>();
+        if (player != null) { 
+            Bounce(player);
+            player.SetCurrentPlatform(this);
         }
     }
 }

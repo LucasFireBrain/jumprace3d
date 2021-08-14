@@ -13,8 +13,10 @@ public class Player : MonoBehaviour
     private float _jumpHeight = 7;
     private float _autoRotationSpeed = 1;
 
+    //AUTO ROTATE
     private bool _isAutoRotate = true;
     private float _autoRotateDelta;
+    private Coroutine _autoRotateRoutine;
 
     private Vector2 _previousTouchPos;
 
@@ -42,6 +44,10 @@ public class Player : MonoBehaviour
         {
             _previousTouchPos = Input.mousePosition;
             _autoRotateDelta = 0;
+            //Stop auto rotate
+            if (_autoRotateRoutine != null) {
+                StopCoroutine(_autoRotateRoutine);
+            }
             _isAutoRotate = false;
         }
         else if (Input.GetMouseButton(0))
@@ -69,6 +75,10 @@ public class Player : MonoBehaviour
 
     public void SetCurrentPlatform(Platform platform) {
         _currentPlatform = platform;
+        _autoRotateRoutine = StartCoroutine(SetAutoRotateRoutine());
+    }
+    IEnumerator SetAutoRotateRoutine() {
+        yield return new WaitForSeconds(0.25f);
         _isAutoRotate = true;
     }
 
@@ -76,6 +86,6 @@ public class Player : MonoBehaviour
         Camera.main.transform.SetParent(null);
         //Play water particles
         //Die
-        //Open Menu
+        GameController.Main.GameOver();
     }
 }

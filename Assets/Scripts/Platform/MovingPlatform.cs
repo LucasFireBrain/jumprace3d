@@ -14,8 +14,8 @@ public class MovingPlatform : Platform
     void Update()
     {
         //Ping Pong move left and right
-        if (_delta < 0.1f) _isMovingRight = true;
-        if (_delta > 1.1f) _isMovingRight = false;
+        if (_delta < -0.5f) _isMovingRight = true;
+        if (_delta > 0.5f) _isMovingRight = false;
         if (_isMovingRight) { 
             transform.Translate(Vector3.right * Time.deltaTime / 3);
             _delta += Time.deltaTime / 3;

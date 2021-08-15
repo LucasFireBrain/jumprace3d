@@ -8,6 +8,11 @@ public class Player : MonoBehaviour
     private Rigidbody _rigidbody;
     private Platform _currentPlatform;
 
+    //LOGIC
+    private Vector2 _previousTouchPos;
+    private bool _isDead;
+
+    //MOVEMENT
     [SerializeField]
     private float _speed = 2;
     private float _jumpHeight = 7;
@@ -18,7 +23,6 @@ public class Player : MonoBehaviour
     private float _autoRotateDelta;
     private Coroutine _autoRotateRoutine;
 
-    private Vector2 _previousTouchPos;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +44,7 @@ public class Player : MonoBehaviour
     }
 
     void Move() {
+        if (_isDead) return;
         if (Input.GetMouseButtonDown(0))
         {
             _previousTouchPos = Input.mousePosition;
@@ -87,5 +92,12 @@ public class Player : MonoBehaviour
         //Play water particles
         //Die
         GameController.Main.GameOver();
+    }
+
+    public void Die(Vector3 contactPoint) {
+        //Set Ragdoll
+        _isDead = true;
+        _rigidbody.AddExplosionForce(20, contactPoint, 4);
+        
     }
 }

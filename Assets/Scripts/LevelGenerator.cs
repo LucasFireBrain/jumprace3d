@@ -9,6 +9,7 @@ public class LevelGenerator : MonoBehaviour
     public GameObject PlatformPrefab;
     public GameObject MovingPlatformPrefab;
     public GameObject BreakablePlatformPrefab;
+    public GameObject PlatformLabelPrefab;
     public GameObject BladesPrefab;
     public GameObject GoalPrefab;
     public LineRenderer Line;
@@ -78,6 +79,10 @@ public class LevelGenerator : MonoBehaviour
             if (_dice.Next(0, 100) < 20) {
                 GameObject blades = Instantiate(BladesPrefab, midPoint, transform.rotation);
             }
+
+            //Platform Label
+            GameObject label = Instantiate(PlatformLabelPrefab, platform);
+            label.GetComponentInChildren<TextMesh>().text = (_platformCount - i).ToString();
 
             //Prepare for next iteration
             _previousPlatform = platform;

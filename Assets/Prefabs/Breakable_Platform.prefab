@@ -1201,7 +1201,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -7387706064836869012, guid: f82a1b42e08fc1540bb7872c578958be, type: 3}
+  m_Mesh: {fileID: -3240527568233834568, guid: 08b3dc6567fd1944191d7794296aaccd, type: 3}
 --- !u!114 &1345354093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1215,6 +1215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Next: {fileID: 0}
+  Animator: {fileID: 0}
+  IsUsed: 0
 --- !u!1 &6880011347047071776
 GameObject:
   m_ObjectHideFlags: 0

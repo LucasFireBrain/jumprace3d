@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
+    public GameObject StartPanel;
+    public GameObject InstructionPanel;
     public GameObject GameOverPanel;
 
     // Start is called before the first frame update
@@ -15,6 +17,18 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+    }
+
+    public void InstructionFade(bool isFadeIn) {
+        Animator animator = InstructionPanel.GetComponent<Animator>();
+        if (isFadeIn)
+        {
+            animator.Play("FadeIn");    //same animation, but states have 1 and -1 speed
+        }
+        else { 
+            animator.Play("FadeOut");
+        }
         
     }
 

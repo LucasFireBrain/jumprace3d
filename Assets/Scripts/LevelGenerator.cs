@@ -53,18 +53,32 @@ public class LevelGenerator : MonoBehaviour
                 platform = Instantiate(MovingPlatformPrefab).transform;
             }
             else if (i != 0 && _dice.Next(0, 100) < 30) {
+                //breakable platform
                 platform = Instantiate(BreakablePlatformPrefab).transform;
             }
-            else { 
+            else {
+                //regular platform
                 platform = Instantiate(PlatformPrefab).transform;
             }
             if (_previousPlatform != null)
             {
-                if (_rand == null) Debug.Log("rand is null");
+                //Curve Path
                 platform.position = _previousPlatform.position + _previousPlatform.forward * _gapSize;
-                int angle = _rand.Next(-35, 35);
-                platform.Rotate(Vector3.up, angle);
+                int angle = _rand.Next(5, 45);
+                platform.eulerAngles = _previousPlatform.eulerAngles + Vector3.up * angle;
                 _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
+
+                //Line renderer
+                Line.SetPosition(2 * i - 1, _previousPlatform.position);
+                Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position)/2;
+                Line.SetPosition(2 * i, midPoint);
+
+                //Create Blades with 20% chance
+                if (_dice.Next(0, 100) < 20) {
+                    GameObject blades = Instantiate(BladesPrefab);
+                    blades.transform.position = midPoint;
+                    blades.transform.forward = platform.forward;
+                }
             }
             else {
                 //Set starting platform
@@ -72,13 +86,6 @@ public class LevelGenerator : MonoBehaviour
             }
             //Start high up and set goal near the water.
             platform.position = platform.position.withY((_platformCount - i) * _slope);
-
-            Line.SetPosition(2 * i, platform.position);
-            Vector3 midPoint = platform.position + platform.forward * _gapSize / 2;
-            Line.SetPosition(2 * i + 1, midPoint);
-            if (_dice.Next(0, 100) < 20) {
-                GameObject blades = Instantiate(BladesPrefab, midPoint, transform.rotation);
-            }
 
             //Platform Label
             GameObject label = Instantiate(PlatformLabelPrefab, platform);

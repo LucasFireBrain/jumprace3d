@@ -6,6 +6,12 @@ public class Platform : MonoBehaviour
 {
     //Linked List
     public Platform Next;
+    public Animator Animator;
+
+    /// <summary>
+    /// did the player jump on it
+    /// </summary>
+    public bool IsUsed;
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -13,16 +19,10 @@ public class Platform : MonoBehaviour
         
     }
 
-    protected virtual void Bounce(Player player) {
-        player.BounceUp();
-        Debug.Log("Collided with " + player.name);
+    public virtual void Bounce() {
+        IsUsed = false;
+        if(Animator != null) Animator.Play("Bounce");
     }
 
-    void OnCollisionEnter(Collision collision) {
-        Player player = collision.rigidbody.GetComponent<Player>();
-        if (player != null) { 
-            Bounce(player);
-            player.SetCurrentPlatform(this);
-        }
-    }
+    
 }

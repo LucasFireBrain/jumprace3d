@@ -26,7 +26,6 @@ public class BeamController : MonoBehaviour
         if (Physics.Raycast(_ray, out _hit, Mathf.Infinity)) {
             if (_hit.collider.GetComponent<Platform>())
             {
-                Debug.Log("HIT PLATFORM");
                 //Is Platform, turn yellow.
                 ChangeColor(1);
                 if (Vector3.Distance(_hit.point, _hit.collider.transform.position) < .2f)

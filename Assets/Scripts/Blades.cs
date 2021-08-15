@@ -10,7 +10,7 @@ public class Blades : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(transform.forward, _rotationSpeed * Time.deltaTime);
+        transform.Rotate(0,0,Time.deltaTime * _rotationSpeed);
     }
 
     void OnCollisionEnter(Collision collision)

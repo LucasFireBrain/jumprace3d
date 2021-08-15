@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class BreakablePlatform : Platform
 {
-    protected override void Bounce(Player player)
+    public override void Bounce()
     {
-        base.Bounce(player);
+        GetComponent<MeshCollider>().enabled = false;
         foreach (Transform t in transform) {
             Rigidbody rb = t.gameObject.AddComponent<Rigidbody>();
             rb.AddExplosionForce(100, transform.position, 1);

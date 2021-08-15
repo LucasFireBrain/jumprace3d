@@ -7,6 +7,8 @@ public class LevelGenerator : MonoBehaviour
     public static Transform StartingPlatform;
 
     public GameObject PlatformPrefab;
+    public GameObject MovingPlatformPrefab;
+    public GameObject BreakablePlatformPrefab;
     public GameObject GoalPrefab;
     public LineRenderer Line;
 
@@ -35,8 +37,13 @@ public class LevelGenerator : MonoBehaviour
 
         for (int i = 0; i < _platformCount; i++)
         {
-
-            Transform platform = Instantiate(PlatformPrefab).transform;
+            Transform platform;
+            if (i % 2 != 0) {
+                platform = Instantiate(MovingPlatformPrefab).transform;
+            }
+            else { 
+                platform = Instantiate(PlatformPrefab).transform;
+            }
             if (_previousPlatform != null)
             {
                 if (_rand == null) Debug.Log("rand is null");

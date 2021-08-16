@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
     public bool IsTapToContinue;
     public bool IsLevelCleared;
 
+    public int CurrentLevel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,17 @@ public class GameController : MonoBehaviour
             GameObject.Destroy(this.gameObject);
             return;
         }
+
+        //Player Prefs
+        if (PlayerPrefs.HasKey("CurrentLevel")) {
+            CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");
+        }
+        else {
+            PlayerPrefs.SetInt("CurrentLevel", 0);
+        }
+
+        //UI
+        UIController.SetLevelText(CurrentLevel);
     }
 
     // Update is called once per frame
@@ -43,5 +56,10 @@ public class GameController : MonoBehaviour
     IEnumerator SetTapToContinueRoutine() {
         yield return new WaitForSeconds(1f);
         IsTapToContinue = true;
+    }
+
+    public void ClearLevel() {
+        IsLevelCleared = true;
+        PlayerPrefs.SetInt("CurrentLevel", ++CurrentLevel);
     }
 }

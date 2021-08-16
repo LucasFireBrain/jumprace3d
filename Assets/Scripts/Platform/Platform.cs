@@ -7,6 +7,7 @@ public class Platform : MonoBehaviour
     //Linked List
     public Platform Next;
     public Animator Animator;
+    public float Progress;
 
     /// <summary>
     /// did the player jump on it

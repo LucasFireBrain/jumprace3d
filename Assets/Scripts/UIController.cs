@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     public GameObject StartPanel;
     public GameObject InstructionPanel;
     public GameObject GameOverPanel;
+
+    public Image ProgressBar;
+    public Text CurrentLevel;
+    public Text NextLevel;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +23,14 @@ public class UIController : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SetProgress(float progress) {
+        ProgressBar.fillAmount = progress;
+    }
+    public void SetLevelText(int currentLevel) {
+        CurrentLevel.text = currentLevel.ToString();
+        NextLevel.text = (currentLevel + 1).ToString();
     }
 
     public void InstructionFade(bool isFadeIn) {

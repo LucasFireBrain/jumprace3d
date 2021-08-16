@@ -5,7 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
+    public ParticleSystem _dustParticles;
+    
     private Rigidbody _rigidbody;
+    private Animator _animator;
     private Platform _currentPlatform;
 
     //LOGIC
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.5f;
         _rigidbody.useGravity = false;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -96,6 +100,7 @@ public class Player : MonoBehaviour
     public void BounceUp() {
         //Apply force upwards.
         _rigidbody.velocity = Vector3.up * _jumpHeight;
+        _animator.Play("Flip_01");
     }
 
     public void SetCurrentPlatform(Platform platform) {
@@ -132,11 +137,19 @@ public class Player : MonoBehaviour
                 _jumpHeight = _baseJumpHeight * 4;
                 _speed = _baseSpeed / 3;
             }
+            else if(platform is GoalPlatform) {
+                _jumpHeight = 0;
+                _speed = 0;
+                //Win
+            }
             else {
-                Debug.Log("Not bottom");
                 _jumpHeight = _baseJumpHeight;
                 _speed = _baseSpeed;
+                GameController.Main.UIController.SetProgress(platform.Progress);
             }
+
+            _dustParticles.Play();
+
             BounceUp();
             platform.Bounce();
         }

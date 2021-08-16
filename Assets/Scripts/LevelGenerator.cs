@@ -14,35 +14,44 @@ public class LevelGenerator : MonoBehaviour
     public GameObject GoalPrefab;
     public LineRenderer Line;
 
+    //Generation Parameters
     private int _platformCount = 20;
     private float _gapSize = 4f;
     private float _zigzag = 0.2f;
     private float _slope = 3f;
     private System.Random _rand;
     private System.Random _dice;
-    private int _seed = 43;
+    public int[] LevelSeeds = { 13, 309, 22, 4, 8, 40 };
+    private int _seed;
 
     private Transform _previousPlatform;
 
     // Start is called before the first frame update
     void Start()
     {
-        //use seed if not 0
-        if (_seed == 0) { 
-            _rand = new System.Random();
-            _dice = new System.Random();
+        //Load Level and Seed
+        Debug.Log(GameController.Main.CurrentLevel);
+        if (GameController.Main.CurrentLevel >= LevelSeeds.Length)
+        {
+            _seed = UnityEngine.Random.Range(1, 1000); //Get Random Seed
         }
         else { 
-            _rand = new System.Random(_seed);
-            _dice = new System.Random(_seed);
+            _seed = LevelSeeds[GameController.Main.CurrentLevel];
         }
+
+        //Set Platform Count
+        _platformCount = 10 + (5 * GameController.Main.CurrentLevel);
+
+        _rand = new System.Random(_seed);
+        _dice = new System.Random(_seed);
+
         GenerateLevel();
     }
 
 
     void GenerateLevel() {
 
-        Line.positionCount = _platformCount * 2;
+        Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform
 
         for (int i = 0; i < _platformCount; i++)
         {
@@ -69,21 +78,27 @@ public class LevelGenerator : MonoBehaviour
                 _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
 
                 //Line renderer
-                Line.SetPosition(2 * i - 1, _previousPlatform.position);
-                Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position)/2;
-                Line.SetPosition(2 * i, midPoint);
+                Line.SetPosition(2 * i - 2, _previousPlatform.position);
+                Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position) / 2;
+                Line.SetPosition(2 * i - 1, midPoint);
 
                 //Create Blades with 20% chance
-                if (_dice.Next(0, 100) < 20) {
+                if (_dice.Next(0, 100) < 20)
+                {
                     GameObject blades = Instantiate(BladesPrefab);
                     blades.transform.position = midPoint;
                     blades.transform.forward = platform.forward;
                 }
+
             }
             else {
                 //Set starting platform
                 StartingPlatform = platform;
             }
+
+            //Set corresponding progress based on index
+            platform.GetComponent<Platform>().Progress = (float)i / (float)_platformCount;
+            
             //Start high up and set goal near the water.
             platform.position = platform.position.withY((_platformCount - i) * _slope);
 
@@ -93,7 +108,20 @@ public class LevelGenerator : MonoBehaviour
 
             //Prepare for next iteration
             _previousPlatform = platform;
+
+            
         }
+        // Create Goal Platform
+        {
+            GameObject goal = Instantiate(GoalPrefab);
+            goal.transform.position = (_previousPlatform.position + _previousPlatform.forward * _gapSize).withY(0);
+            Vector3 midPoint = (goal.transform.position + _previousPlatform.position) / 2;
+            Line.SetPosition(Line.positionCount - 3, _previousPlatform.position);
+            Line.SetPosition(Line.positionCount - 2, midPoint);
+            Line.SetPosition(Line.positionCount - 1, goal.transform.position);
+        }
+
+        
     }
     // Update is called once per frame
     void Update()

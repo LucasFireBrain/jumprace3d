@@ -366,7 +366,7 @@ Transform:
   m_GameObject: {fileID: 7137915699075552484}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 1285802712225441583}
   - {fileID: 7697687563354125040}
@@ -401,6 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Next: {fileID: 0}
   Animator: {fileID: 2090965217396823413}
+  Progress: 0
   IsUsed: 0
 --- !u!1 &7541253293677232108
 GameObject:

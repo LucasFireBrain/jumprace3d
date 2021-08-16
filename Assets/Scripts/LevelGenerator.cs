@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelGenerator : MonoBehaviour
-{
+public class LevelGenerator : MonoBehaviour {
     public static Transform StartingPlatform;
 
     public GameObject PlatformPrefab;
@@ -16,9 +15,9 @@ public class LevelGenerator : MonoBehaviour
 
     //Generation Parameters
     private int _platformCount = 20;
-    private float _gapSize = 4f;
+    private float _gapSize = 6f;
     private float _zigzag = 0.2f;
-    private float _slope = 3f;
+    private float _slope = 1.5f;
     private System.Random _rand;
     private System.Random _dice;
     public int[] LevelSeeds = { 13, 309, 22, 4, 8, 40 };
@@ -27,15 +26,13 @@ public class LevelGenerator : MonoBehaviour
     private Transform _previousPlatform;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         //Load Level and Seed
         Debug.Log(GameController.Main.CurrentLevel);
-        if (GameController.Main.CurrentLevel >= LevelSeeds.Length)
-        {
+        if (GameController.Main.CurrentLevel >= LevelSeeds.Length) {
             _seed = UnityEngine.Random.Range(1, 1000); //Get Random Seed
         }
-        else { 
+        else {
             _seed = LevelSeeds[GameController.Main.CurrentLevel];
         }
 
@@ -53,12 +50,10 @@ public class LevelGenerator : MonoBehaviour
 
         Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform
 
-        for (int i = 0; i < _platformCount; i++)
-        {
+        for (int i = 0; i < _platformCount; i++) {
             Transform platform;
 
-            if (i != 0 && _dice.Next(0, 100) < 30)
-            {   //30% chance of moving platform
+            if (i != 0 && _dice.Next(0, 100) < 30) {   //30% chance of moving platform
                 platform = Instantiate(MovingPlatformPrefab).transform;
             }
             else if (i != 0 && _dice.Next(0, 100) < 30) {
@@ -69,8 +64,7 @@ public class LevelGenerator : MonoBehaviour
                 //regular platform
                 platform = Instantiate(PlatformPrefab).transform;
             }
-            if (_previousPlatform != null)
-            {
+            if (_previousPlatform != null) {
                 //Curve Path
                 platform.position = _previousPlatform.position + _previousPlatform.forward * _gapSize;
                 int angle = _rand.Next(5, 45);
@@ -83,8 +77,7 @@ public class LevelGenerator : MonoBehaviour
                 Line.SetPosition(2 * i - 1, midPoint);
 
                 //Create Blades with 20% chance
-                if (_dice.Next(0, 100) < 20)
-                {
+                if (_dice.Next(0, 100) < 20) {
                     GameObject blades = Instantiate(BladesPrefab);
                     blades.transform.position = midPoint;
                     blades.transform.forward = platform.forward;
@@ -98,7 +91,7 @@ public class LevelGenerator : MonoBehaviour
 
             //Set corresponding progress based on index
             platform.GetComponent<Platform>().Progress = (float)i / (float)_platformCount;
-            
+
             //Start high up and set goal near the water.
             platform.position = platform.position.withY((_platformCount - i) * _slope);
 
@@ -109,11 +102,12 @@ public class LevelGenerator : MonoBehaviour
             //Prepare for next iteration
             _previousPlatform = platform;
 
-            
+
         }
         // Create Goal Platform
         {
             GameObject goal = Instantiate(GoalPrefab);
+            goal.transform.rotation = _previousPlatform.rotation;
             goal.transform.position = (_previousPlatform.position + _previousPlatform.forward * _gapSize).withY(0);
             Vector3 midPoint = (goal.transform.position + _previousPlatform.position) / 2;
             Line.SetPosition(Line.positionCount - 3, _previousPlatform.position);
@@ -121,11 +115,10 @@ public class LevelGenerator : MonoBehaviour
             Line.SetPosition(Line.positionCount - 1, goal.transform.position);
         }
 
-        
+
     }
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+
     }
 }

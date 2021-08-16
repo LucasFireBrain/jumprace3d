@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeamController : MonoBehaviour
-{
+public class BeamController : MonoBehaviour {
     public Transform BeamOrigin;
 
     private Color[] _colors = { new Color(1, 0, 0, 0.3f), new Color(1, 1, 0, 0.3f), new Color(0, 1, 0, 0.3f) };
@@ -13,31 +12,26 @@ public class BeamController : MonoBehaviour
     private Ray _ray;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         _renderer = GetComponent<Renderer>();
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         _ray = new Ray(BeamOrigin.position, Vector3.down);
         //Check floor below player
         if (Physics.Raycast(_ray, out _hit, Mathf.Infinity)) {
-            if (_hit.collider.GetComponent<Platform>())
-            {
+            if (_hit.collider.GetComponent<Platform>()) {
                 //Is Platform, turn yellow.
                 ChangeColor(1);
-                if (Vector3.Distance(_hit.point, _hit.collider.transform.position) < .2f)
-                {
+                if (Vector3.Distance(_hit.point, _hit.collider.transform.position) < .2f) {
                     //Is in the middle, turn green.
                     ChangeColor(2);
                 }
 
                 SetBeamSize(_hit.point, BeamOrigin.position);
             }
-            else
-            {
+            else {
                 //Is not over platform, turn red.
                 ChangeColor(0);
                 SetBeamSize(_hit.point, BeamOrigin.position);
@@ -48,8 +42,8 @@ public class BeamController : MonoBehaviour
             ChangeColor(0);
         }
     }
-    void SetBeamColor() { 
-        
+    void SetBeamColor() {
+
     }
     void ChangeColor(int colorIndex) {
         _renderer.material.SetColor("_Color", _colors[colorIndex]);

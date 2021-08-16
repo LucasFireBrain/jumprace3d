@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour
-{
+public class Player : MonoBehaviour, IPlayer {
     public ParticleSystem _dustParticles;
-    
+
     private Rigidbody _rigidbody;
     private Animator _animator;
     private Platform _currentPlatform;
+
+    private float _progress;
 
     //LOGIC
     private Vector2 _previousTouchPos;
@@ -31,19 +32,20 @@ public class Player : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         _rigidbody = GetComponent<Rigidbody>();
-        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.5f;
+        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
         _rigidbody.useGravity = false;
         _animator = GetComponentInChildren<Animator>();
+
+        //Add to player list
+        GameController.Main.Players.Add(this);
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         //Process input and move only after starter or if is not dead
-        if(_isStarted && !_isDead) Move();
+        if (_isStarted && !_isDead) Move();
 
         if (!_isStarted) {
             if (Input.GetMouseButtonUp(0)) {
@@ -60,13 +62,12 @@ public class Player : MonoBehaviour
     void TapToStart() {
         _isStarted = true;
         _rigidbody.useGravity = true;
-        GameController.Main.UIController.StartPanel.SetActive(false);   
+        GameController.Main.UIController.StartPanel.SetActive(false);
         GameController.Main.UIController.InstructionFade(true);             //Show instructions
     }
 
     void Move() {
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)) {
             if (!_hasMoved) {
                 _hasMoved = true;
                 GameController.Main.UIController.InstructionFade(false);    //Hide Instructions
@@ -79,8 +80,7 @@ public class Player : MonoBehaviour
             }
             _isAutoRotate = false;
         }
-        else if (Input.GetMouseButton(0))
-        {
+        else if (Input.GetMouseButton(0)) {
             //move forward
             _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
             //Rotate
@@ -113,45 +113,58 @@ public class Player : MonoBehaviour
     }
 
     public void EnterWater() {
-        Camera.main.transform.SetParent(null);
-        //Play water particles
-        //Die
-        GameController.Main.GameOver();
+        Die();
     }
 
-    public void Die(Vector3 contactPoint) {
+    public void Die() {
         //Set Ragdoll
+        Camera.main.transform.SetParent(null);
+        _progress = 0;
         _isDead = true;
-        _rigidbody.AddExplosionForce(20, contactPoint, 4);
+        GameController.Main.GameOver(false);
         
+
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
+    void OnCollisionEnter(Collision collision) {
         Debug.Log(collision.transform.name);
         Platform platform = collision.transform.GetComponentInParent<Platform>();
-        if (platform != null)
-        {
-            if (platform is BottomPlatform)
-            {
+        if (platform != null) {
+            if (platform is BottomPlatform) {
                 _jumpHeight = _baseJumpHeight * 4;
                 _speed = _baseSpeed / 3;
             }
-            else if(platform is GoalPlatform) {
+            else if (platform is GoalPlatform) {
                 _jumpHeight = 0;
                 _speed = 0;
                 //Win
+                GameController.Main.GameOver(true);
+                _animator.Play("Idle");
             }
             else {
                 _jumpHeight = _baseJumpHeight;
                 _speed = _baseSpeed;
-                GameController.Main.UIController.SetProgress(platform.Progress);
+                _progress = platform.Progress;
+                GameController.Main.UIController.SetProgress(_progress);
             }
 
             _dustParticles.Play();
 
-            BounceUp();
+            if (!(platform is GoalPlatform)) { 
+                BounceUp();
+            }
             platform.Bounce();
+
+            //Update ranks
+            GameController.Main.UpdatePlayerRank();
         }
+    }
+
+    public float GetProgress() {
+        return _progress;
+    }
+
+    public string GetName() {
+        return name;
     }
 }

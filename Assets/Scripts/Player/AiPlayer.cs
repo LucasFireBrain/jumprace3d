@@ -28,12 +28,10 @@ public class AiPlayer : MonoBehaviour, IPlayer {
 
     // Start is called before the first frame update
     void Start() {
-        Debug.Log("AI START");
         _rigidbody = GetComponent<Rigidbody>();
 
         _currentPlatform = LevelGenerator.StartingPlatform.GetComponent<Platform>();
         for (int i = 0; i <= AiIndex; i++) {
-            Debug.Log(AiIndex);
             _currentPlatform = _currentPlatform.Next;
         }
 
@@ -70,7 +68,6 @@ public class AiPlayer : MonoBehaviour, IPlayer {
         }
     }
     void OnCollisionEnter(Collision collision) {
-        Debug.Log(collision.transform.name);
         Platform platform = collision.transform.GetComponentInParent<Platform>();
         if (platform != null) {
             //Reset bounce count

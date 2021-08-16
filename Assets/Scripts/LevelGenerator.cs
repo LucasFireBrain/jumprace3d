@@ -28,7 +28,6 @@ public class LevelGenerator : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         //Load Level and Seed
-        Debug.Log(GameController.Main.CurrentLevel);
         if (GameController.Main.CurrentLevel >= LevelSeeds.Length) {
             _seed = UnityEngine.Random.Range(1, 1000); //Get Random Seed
         }

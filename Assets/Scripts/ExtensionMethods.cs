@@ -11,4 +11,8 @@ public static class ExtensionMethods
     {
         return new Vector3(vector.x, y, vector.z);
     }
+
+    public static float XYDistance(this Vector3 self, Vector3 other) {
+        return Vector2.Distance(new Vector2(self.x, self.z), new Vector2(other.x, other.z));
+    }
 }

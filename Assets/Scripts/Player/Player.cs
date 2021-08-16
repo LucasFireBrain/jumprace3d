@@ -4,13 +4,16 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour, IPlayer {
+
     public ParticleSystem _dustParticles;
+    public ParticleSystem[] Rockets;
 
     private Rigidbody _rigidbody;
     private Animator _animator;
     private Platform _currentPlatform;
 
     private float _progress;
+    private int _bounceCount;
 
     //LOGIC
     private Vector2 _previousTouchPos;
@@ -103,8 +106,15 @@ public class Player : MonoBehaviour, IPlayer {
         _animator.Play("Flip_01");
     }
 
+    void FireRockets() {
+        foreach (ParticleSystem rocket in Rockets) {
+            rocket.Play();
+        }
+    }
+
     public void SetCurrentPlatform(Platform platform) {
         _currentPlatform = platform;
+        _bounceCount = 0;
         _autoRotateRoutine = StartCoroutine(SetAutoRotateRoutine());
     }
     IEnumerator SetAutoRotateRoutine() {
@@ -127,13 +137,22 @@ public class Player : MonoBehaviour, IPlayer {
     }
 
     void OnCollisionEnter(Collision collision) {
-        Debug.Log(collision.transform.name);
+        //Collision with other players
+
+        //Collision with Platform
         Platform platform = collision.transform.GetComponentInParent<Platform>();
         if (platform != null) {
+
+            if (_currentPlatform != platform) {
+                SetCurrentPlatform(platform);
+            }
+
             if (platform is BottomPlatform) {
+                //Normal Speed;
                 _jumpHeight = _baseJumpHeight * 4;
                 _speed = _baseSpeed / 3;
             }
+
             else if (platform is GoalPlatform) {
                 _jumpHeight = 0;
                 _speed = 0;
@@ -141,13 +160,31 @@ public class Player : MonoBehaviour, IPlayer {
                 GameController.Main.GameOver(true);
                 _animator.Play("Idle");
             }
-            else {
-                _jumpHeight = _baseJumpHeight;
-                _speed = _baseSpeed;
+            else {  //Hit normal platforms (red, yellow, purple)
+                Debug.Log("XY " + transform.position.XYDistance(platform.transform.position));
+                //Bonus Speed
+                if (_bounceCount == 0 && transform.position.XYDistance(platform.transform.position) < 0.2f) {
+                    Debug.Log("PERFECT");
+                    _jumpHeight = _baseJumpHeight * 1.3f;
+                    _speed = _baseSpeed * 1.3f;
+                    //Rocket shoes particles
+                    FireRockets();
+                }
+                else if (_bounceCount == 0 && transform.position.XYDistance(platform.transform.position) < 0.3f) {
+                    Debug.Log("GOOD");
+                    _jumpHeight = _baseJumpHeight * 1.15f;
+                    _speed = _baseSpeed * 1.15f;
+                }
+                else {
+                    //Normal Speed;
+                    _jumpHeight = _baseJumpHeight;
+                    _speed = _baseSpeed;
+                }
                 _progress = platform.Progress;
                 GameController.Main.UIController.SetProgress(_progress);
             }
 
+            _bounceCount++;
             _dustParticles.Play();
 
             if (!(platform is GoalPlatform)) { 
@@ -167,4 +204,6 @@ public class Player : MonoBehaviour, IPlayer {
     public string GetName() {
         return name;
     }
+
+    
 }

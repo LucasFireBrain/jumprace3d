@@ -5,8 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour, IPlayer {
 
-    public ParticleSystem _dustParticles;
+    public ParticleSystem DustParticles;
     public ParticleSystem[] Rockets;
+    public GameObject WaterParticles;   //Used by enabling game object
 
     private Rigidbody _rigidbody;
     private Animator _animator;
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour, IPlayer {
     //LOGIC
     private Vector2 _previousTouchPos;
     private bool _isDead;
+    private bool _isEnteredWater;
     private bool _isStarted;
     private bool _hasMoved;
 
@@ -57,8 +59,8 @@ public class Player : MonoBehaviour, IPlayer {
         }
 
         //Fall
-        if (transform.position.y < -0.5f) {
-            EnterWater();
+        if (!_isEnteredWater && transform.position.y < -0.1f) {
+             EnterWater();
         }
     }
 
@@ -123,6 +125,7 @@ public class Player : MonoBehaviour, IPlayer {
     }
 
     public void EnterWater() {
+        WaterParticles.SetActive(true);
         Die();
     }
 
@@ -161,16 +164,16 @@ public class Player : MonoBehaviour, IPlayer {
                 _animator.Play("Idle");
             }
             else {  //Hit normal platforms (red, yellow, purple)
-                Debug.Log("XY " + transform.position.XYDistance(platform.transform.position));
+                Debug.Log("XY " + transform.position.DistanceXY(platform.transform.position));
                 //Bonus Speed
-                if (_bounceCount == 0 && transform.position.XYDistance(platform.transform.position) < 0.2f) {
+                if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.2f) {
                     Debug.Log("PERFECT");
                     _jumpHeight = _baseJumpHeight * 1.3f;
                     _speed = _baseSpeed * 1.3f;
                     //Rocket shoes particles
                     FireRockets();
                 }
-                else if (_bounceCount == 0 && transform.position.XYDistance(platform.transform.position) < 0.3f) {
+                else if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.3f) {
                     Debug.Log("GOOD");
                     _jumpHeight = _baseJumpHeight * 1.15f;
                     _speed = _baseSpeed * 1.15f;
@@ -185,7 +188,7 @@ public class Player : MonoBehaviour, IPlayer {
             }
 
             _bounceCount++;
-            _dustParticles.Play();
+            DustParticles.Play();
 
             if (!(platform is GoalPlatform)) { 
                 BounceUp();

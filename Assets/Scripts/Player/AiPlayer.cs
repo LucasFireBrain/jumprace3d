@@ -57,13 +57,15 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     // Update is called once per frame
     void Update() {
 
-        transform.LookAt(_currentPlatform.Next.transform.position.withY(transform.position.y)); //Look forward at the next platform
+        if (_currentPlatform != null && _currentPlatform.Next != null) { 
+            transform.LookAt(_currentPlatform.Next.transform.position.withY(transform.position.y)); //Look forward at the next platform
 
-        //Move after a number of bounces
-        if (_bounceCount > Random.Range(1, 3)) {
-            //Check distance between AI and Next Platform on XY Plane
-            if (Vector3.Distance(transform.position, _currentPlatform.Next.transform.position.withY(transform.position.y)) > 0.1f) {
-                _rigidbody.MovePosition(transform.position + transform.forward * Time.deltaTime * _speed);
+            //Move after a number of bounces
+            if (_bounceCount > Random.Range(0, 2)) {
+                //Check distance between AI and Next Platform on XY Plane
+                if (transform.position.DistanceXY(_currentPlatform.Next.transform.position) > 0.05f) {
+                    _rigidbody.MovePosition(transform.position + transform.forward * Time.deltaTime * _speed);
+                }
             }
         }
     }

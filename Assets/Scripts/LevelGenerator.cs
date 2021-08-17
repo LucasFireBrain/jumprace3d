@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour {
+    
     public static Transform StartingPlatform;
 
     public GameObject PlatformPrefab;
     public GameObject MovingPlatformPrefab;
     public GameObject BreakablePlatformPrefab;
+    public GameObject BottomPlatformPrefab;
     public GameObject PlatformLabelPrefab;
     public GameObject BladesPrefab;
     public GameObject GoalPrefab;
@@ -24,6 +26,7 @@ public class LevelGenerator : MonoBehaviour {
     private int _seed;
 
     private Transform _previousPlatform;
+    private Bounds _bounds; //Used to add Bottom platforms below the generated stage
 
     // Start is called before the first frame update
     void Start() {
@@ -42,6 +45,9 @@ public class LevelGenerator : MonoBehaviour {
         _dice = new System.Random(_seed);
 
         GenerateLevel();
+
+        //Quick Fix: Reset AI Index everytime the level is generated
+        AiPlayer.AiIndex = 0;
     }
 
 
@@ -101,8 +107,21 @@ public class LevelGenerator : MonoBehaviour {
             //Prepare for next iteration
             _previousPlatform = platform;
 
+            //Add to bounds
+            _bounds.Encapsulate(platform.GetComponentInChildren<Renderer>().bounds);
 
         }
+        //Create Bottom Platforms (on water)
+        int xCount = (int)_bounds.size.x / 5;
+        int zCount = (int)_bounds.size.z / 5;
+        Vector3 origin = _bounds.min;
+        for (int x = 0; x < xCount; x++) {
+            for (int z = 0; z < zCount; z++) {
+                GameObject bottomPlatform = Instantiate(BottomPlatformPrefab);
+                bottomPlatform.transform.position = origin + new Vector3(x * 7, 0, z * 7) + Vector3.zero.RandomOffset(2,0,2);
+            }
+        }
+
         // Create Goal Platform
         {
             GameObject goal = Instantiate(GoalPrefab);

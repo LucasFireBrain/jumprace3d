@@ -52,7 +52,7 @@ public class UIController : MonoBehaviour {
     }
 
     IEnumerator ShowGameOverPanelRoutine() {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(2f);
         UpdateGameOverRankText();
         GameOverPanel.SetActive(true);
     }
@@ -93,7 +93,7 @@ public class UIController : MonoBehaviour {
             }
             if (player is Player) {
                 GameOverRanks[i].text = "You";
-                if (i != 0) GameOverRanks[i].transform.parent.GetComponent<Image>().color = Color.red;
+                if (i != 0) GameOverRanks[i].transform.parent.GetComponent<Image>().color = new Color(0.88f, 0.36f, 0.13f);
             }
         }
     }

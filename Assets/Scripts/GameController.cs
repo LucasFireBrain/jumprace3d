@@ -27,6 +27,8 @@ public class GameController : MonoBehaviour {
             GameObject.Destroy(this.gameObject);
             return;
         }
+        PlayerPrefs.DeleteAll();
+
         //Player Prefs
         if (PlayerPrefs.HasKey("CurrentLevel")) {
             CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");
@@ -55,7 +57,7 @@ public class GameController : MonoBehaviour {
     }
 
     IEnumerator SetTapToContinueRoutine() {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(4f);
         IsTapToContinue = true;
     }
 

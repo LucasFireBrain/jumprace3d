@@ -21834,7 +21834,6 @@ MonoBehaviour:
   BladesPrefab: {fileID: 8917799799253992776, guid: e5ce8eaf052328d42899d2b112f91ace, type: 3}
   GoalPrefab: {fileID: 1772369748516408159, guid: 299bd378540dc274ca644086e3a197f7, type: 3}
   Line: {fileID: 1567378805}
-  LevelSeeds: 0d0000003501000016000000040000000800000028000000
 --- !u!4 &874123623
 Transform:
   m_ObjectHideFlags: 0
@@ -23419,6 +23418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1294929946}
   - component: {fileID: 1294929947}
+  - component: {fileID: 1294929948}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -23457,6 +23457,18 @@ MonoBehaviour:
   IsTapToContinue: 0
   IsLevelCleared: 0
   CurrentLevel: 0
+--- !u!114 &1294929948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294929945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2749132623948347852054dc8c0dab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1322508879
 GameObject:
   m_ObjectHideFlags: 0

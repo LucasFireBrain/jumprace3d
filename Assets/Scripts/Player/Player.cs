@@ -3,51 +3,55 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour, IPlayer {
+public class Player : MonoBehaviour, IPlayer, ITouchHandler {
 
+    //REFERENCES
+    private Animator _animator;
+    private Platform _currentPlatform;
+    private Rigidbody _rigidbody;
+  
+    //PARTICLES
     public ParticleSystem DustParticles;
     public ParticleSystem[] Rockets;
     public GameObject WaterParticles;   //Used by enabling game object
 
-    private Rigidbody _rigidbody;
-    private Animator _animator;
-    private Platform _currentPlatform;
-
-    private float _progress;
-    private int _bounceCount;
 
     //INPUT
-    private float _dragFactor = 10000;
-
-    //LOGIC
+    private float _dragFactor = 200;
     private Vector2 _previousTouchPos;
+
+    //GAME LOGIC
     private bool _isDead;
     private bool _isEnteredWater;
     private bool _isStarted;
     private bool _hasMoved;
+    private float _progress;
+    private int _bounceCount;
 
     //MOVEMENT
     private float _baseSpeed = 5;
     private float _speed = 2;
     private float _baseJumpHeight = 7;
     private float _jumpHeight;
-    private float _autoRotationSpeed = 1;
 
     //AUTO ROTATE
-    private bool _isAutoRotate = true;
-    private float _autoRotateDelta;
     private Coroutine _autoRotateRoutine;
+    private float _autoRotationSpeed = 1;
+    private float _autoRotateDelta;
+    private bool _isAutoRotate = true;
 
 
     // Start is called before the first frame update
     void Start() {
-        Debug.Log("DPI: " + Screen.dpi);
-        Debug.Log("RES: " + Screen.width);
 
+        //Initialize
         _rigidbody = GetComponent<Rigidbody>();
-        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
         _rigidbody.useGravity = false;
         _animator = GetComponentInChildren<Animator>();
+        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
+
+        //Add to Input Manager
+        InputManager.TouchHandlers.Add(this);
 
         //Add to player list
         GameController.Main.Players.Add(this);
@@ -55,29 +59,67 @@ public class Player : MonoBehaviour, IPlayer {
 
     // Update is called once per frame
     void Update() {
-        //Process input and move only after starter or if is not dead
-        if (_isStarted && !_isDead) Move();
-
-        if (!_isStarted) {
-            if (Input.GetMouseButtonUp(0)) {
-                TapToStart();
-            }
-        }
-
+#if UNITY_EDITOR    //For testing on editor with mouse
+        //{ //Process input and move only after started or if player is not dead
+        //    if (_isStarted && !_isDead) MoveAndRotate();
+        //    if (!_isStarted) {
+        //        if (Input.GetMouseButtonUp(0)) {
+        //            OnTap(new Touch());
+        //        }
+        //    }
+        //}
+#endif
         //Fall
         if (!_isEnteredWater && transform.position.y < -0.1f) {
              EnterWater();
         }
     }
-
-    void TapToStart() {
-        _isStarted = true;
-        _rigidbody.useGravity = true;
-        GameController.Main.UIController.StartPanel.SetActive(false);
-        GameController.Main.UIController.InstructionFade(true);             //Show instructions
+    public void OnTouch(Touch touch) {
+        if (_isStarted && !_isDead) MoveAndRotate(touch);
+    }
+    public void OnTap(Touch touch) {
+        if (!_isStarted) {
+            _isStarted = true;
+            _rigidbody.useGravity = true;
+            GameController.Main.UIController.StartPanel.SetActive(false);
+            GameController.Main.UIController.InstructionFade(true);             //Show instructions
+        }
     }
 
-    void Move() {
+    void MoveAndRotate(Touch touch) {
+        if (touch.phase == TouchPhase.Began) {
+            if (!_hasMoved) {   //Hide Instructions
+                _hasMoved = true;
+                GameController.Main.UIController.InstructionFade(false);    
+            }
+            _previousTouchPos = touch.position;
+            _autoRotateDelta = 0;
+
+            if (_autoRotateRoutine != null) {     //Stop auto rotate
+                StopCoroutine(_autoRotateRoutine);
+            }
+            _isAutoRotate = false;
+        }
+        else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
+            //move forward
+            _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+            //Rotate
+            float xDelta = (touch.position.x - _previousTouchPos.x) / Screen.width * _dragFactor;
+            _previousTouchPos = touch.position;
+            transform.Rotate(Vector3.up, xDelta);
+        }
+        else if (_isAutoRotate && _currentPlatform != null) {
+            float currentAngle = transform.eulerAngles.y;
+            float targetAngle = _currentPlatform.transform.eulerAngles.y;
+            _autoRotateDelta += Time.deltaTime * _autoRotationSpeed;
+            float angle = Mathf.LerpAngle(currentAngle, targetAngle, _autoRotateDelta);
+            transform.eulerAngles = transform.eulerAngles.withY(angle);
+        }
+    }
+
+#if UNITY_EDITOR
+    void MoveAndRotate() {   //Move with mouse, for editor testing or web version
+
         if (Input.GetMouseButtonDown(0)) {
             if (!_hasMoved) {
                 _hasMoved = true;
@@ -95,11 +137,11 @@ public class Player : MonoBehaviour, IPlayer {
             //move forward
             _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
             //Rotate
-            float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor / Screen.dpi;
+            float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor;
             _previousTouchPos = Input.mousePosition;
             transform.Rotate(Vector3.up, xDelta);
         }
-        else if (_isAutoRotate && _currentPlatform != null) {
+        else if (_isAutoRotate && _currentPlatform != null ) {
             float currentAngle = transform.eulerAngles.y;
             float targetAngle = _currentPlatform.transform.eulerAngles.y;
             _autoRotateDelta += Time.deltaTime * _autoRotationSpeed;
@@ -107,8 +149,9 @@ public class Player : MonoBehaviour, IPlayer {
             transform.eulerAngles = transform.eulerAngles.withY(angle);
         }
     }
+#endif
 
-    public void BounceUp() {
+    void BounceUp() {
         //Apply force upwards.
         _rigidbody.velocity = Vector3.up * _jumpHeight;
         _animator.Play("Flip_01");
@@ -120,7 +163,7 @@ public class Player : MonoBehaviour, IPlayer {
         }
     }
 
-    public void SetCurrentPlatform(Platform platform) {
+    void SetCurrentPlatform(Platform platform) {
         _currentPlatform = platform;
         _bounceCount = 0;
         _autoRotateRoutine = StartCoroutine(SetAutoRotateRoutine());
@@ -130,19 +173,9 @@ public class Player : MonoBehaviour, IPlayer {
         _isAutoRotate = true;
     }
 
-    public void EnterWater() {
+    void EnterWater() {
         WaterParticles.SetActive(true);
         Die();
-    }
-
-    public void Die() {
-        //Set Ragdoll
-        Camera.main.transform.SetParent(null);
-        _progress = 0;
-        _isDead = true;
-        GameController.Main.GameOver(false);
-        
-
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -169,8 +202,7 @@ public class Player : MonoBehaviour, IPlayer {
                 GameController.Main.GameOver(true);
                 _animator.Play("Idle");
             }
-            else {  //Hit normal platforms (red, yellow, purple)
-                Debug.Log("XY " + transform.position.DistanceXY(platform.transform.position));
+            else {  //platform is NormalPlatforms
                 //Bonus Speed
                 if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.2f) {
                     Debug.Log("PERFECT");
@@ -213,6 +245,12 @@ public class Player : MonoBehaviour, IPlayer {
     public string GetName() {
         return name;
     }
+    public void Die() {
+        //Set Ragdoll
+        Camera.main.transform.SetParent(null);
+        _progress = 0;
+        _isDead = true;
+        GameController.Main.GameOver(false);
+    }
 
-    
 }

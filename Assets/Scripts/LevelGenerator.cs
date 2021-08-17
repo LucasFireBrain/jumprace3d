@@ -15,45 +15,48 @@ public class LevelGenerator : MonoBehaviour {
     public GameObject GoalPrefab;
     public LineRenderer Line;
 
-    //Generation Parameters
-    private int _platformCount = 20;
-    private float _gapSize = 6f;
-    private float _zigzag = 0.2f;
-    private float _slope = 1.5f;
-    private System.Random _rand;
-    private System.Random _dice;
-    public int[] LevelSeeds = { 13, 309, 22, 4, 8, 40 };
-    private int _seed;
-
     private Transform _previousPlatform;
     private Bounds _bounds; //Used to add Bottom platforms below the generated stage
+
+    //Generation Parameters
+    private float _gapSize = 6f;    //Distance between each platform
+    private float _slope = 1.5f;    //Height factor
+    private int _zigzag = 10;   //Chance of direction change
+
+    private int _platformCount;     //Controlled by current level
+    
+    private int[] _levelSeeds = { 13, 309, 22, 4, 8, 40 };    //Make the first levels always the same
+    private int _seed;
+
+    private bool _isCurvedLeft;
+
+    private System.Random _rand;
+    private System.Random _dice;
 
     // Start is called before the first frame update
     void Start() {
         //Load Level and Seed
-        if (GameController.Main.CurrentLevel >= LevelSeeds.Length) {
-            _seed = UnityEngine.Random.Range(1, 1000); //Get Random Seed
+        if (GameController.Main.CurrentLevel < _levelSeeds.Length) {
+            _seed = _levelSeeds[GameController.Main.CurrentLevel];   //Get seed from array
         }
         else {
-            _seed = LevelSeeds[GameController.Main.CurrentLevel];
+            _seed = UnityEngine.Random.Range(1, 1000); //Get Random Seed
         }
-
-        //Set Platform Count
-        _platformCount = 10 + (5 * GameController.Main.CurrentLevel);
 
         _rand = new System.Random(_seed);
         _dice = new System.Random(_seed);
+        //Set Platform Count
+
+        _platformCount = 10 + (5 * GameController.Main.CurrentLevel);
 
         GenerateLevel();
 
-        //Quick Fix: Reset AI Index everytime the level is generated
-        AiPlayer.AiIndex = 0;
     }
 
 
     void GenerateLevel() {
 
-        Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform
+        Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform // times 2 is for the midPoints
 
         for (int i = 0; i < _platformCount; i++) {
             Transform platform;
@@ -61,7 +64,7 @@ public class LevelGenerator : MonoBehaviour {
             if (i != 0 && _dice.Next(0, 100) < 30) {   //30% chance of moving platform
                 platform = Instantiate(MovingPlatformPrefab).transform;
             }
-            else if (i != 0 && _dice.Next(0, 100) < 30) {
+            else if (i != 0 && _dice.Next(0, 100) < 30) {   //30% chance after that for breakable platform
                 //breakable platform
                 platform = Instantiate(BreakablePlatformPrefab).transform;
             }
@@ -72,7 +75,14 @@ public class LevelGenerator : MonoBehaviour {
             if (_previousPlatform != null) {
                 //Curve Path
                 platform.position = _previousPlatform.position + _previousPlatform.forward * _gapSize;
-                int angle = _rand.Next(5, 45);
+                int angle = _rand.Next(5, 90);
+
+                //Switch Direction
+                if (_dice.Next(0, 100) < _zigzag) {
+                    _isCurvedLeft = !_isCurvedLeft;
+                }
+                if (_isCurvedLeft) angle = -angle;  //make angle negative to turn left
+
                 platform.eulerAngles = _previousPlatform.eulerAngles + Vector3.up * angle;
                 _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
 

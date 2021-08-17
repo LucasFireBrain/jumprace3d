@@ -8,4 +8,9 @@ public class BottomPlatform : Platform {
     void Update() {
 
     }
+
+    //Hide
+    IEnumerator HideRoutine() {
+        yield return new WaitForSeconds(1);
+    }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour, ITouchHandler {
     public static GameController Main;
 
     public UIController UIController;
@@ -38,15 +38,25 @@ public class GameController : MonoBehaviour {
 
         //UI
         UIController.SetLevelText(CurrentLevel);
+
+        //Add to Input Manager
+        InputManager.TouchHandlers.Add(this);
     }
 
-    // Update is called once per frame
-    void Update() {
+    public void OnTouch(Touch touch) {}
+
+    public void OnTap(Touch touch) {
         if (IsTapToContinue) {
-            if (Input.GetMouseButtonDown(0)) {
-                SceneManager.LoadScene(0);
-            }
+            Restart();
         }
+    }
+
+    void Restart() {
+        InputManager.TouchHandlers.Clear();
+
+        //Reset static variables
+        SceneManager.LoadScene(0);
+        AiPlayer.AiIndex = 0;
     }
 
     public void GameOver(bool isCompleted) {
@@ -69,5 +79,4 @@ public class GameController : MonoBehaviour {
         Players = Players.OrderByDescending(p => p.GetProgress()).ToList();
         UIController.UpdateRankText();
     }
-
 }

@@ -15598,7 +15598,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343299174}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.35, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 874123623}
@@ -21829,7 +21829,7 @@ MonoBehaviour:
   PlatformPrefab: {fileID: 7137915699075552484, guid: 7b8df32b59e8931438cc8bc0a5c68cab, type: 3}
   MovingPlatformPrefab: {fileID: 7137915699075552484, guid: 36da940c7a5aebc47a06c99bb27728a5, type: 3}
   BreakablePlatformPrefab: {fileID: 6522801963134760941, guid: 0e791e017cde5ad4284f740d843503ed, type: 3}
-  BottomPlatformPrefab: {fileID: 0}
+  BottomPlatformPrefab: {fileID: 3207078521684027841, guid: 7b48cf2c31858c34b93fdf9b15ab1a8e, type: 3}
   PlatformLabelPrefab: {fileID: 1976323502042318809, guid: 98e18951d87ce754496cc66ba725634d, type: 3}
   BladesPrefab: {fileID: 8917799799253992776, guid: e5ce8eaf052328d42899d2b112f91ace, type: 3}
   GoalPrefab: {fileID: 1772369748516408159, guid: 299bd378540dc274ca644086e3a197f7, type: 3}
@@ -35372,7 +35372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2496283591505289748, guid: 8dc38d398f491fc449f0349bff54bb7a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.65
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2691864712023904582, guid: 8dc38d398f491fc449f0349bff54bb7a, type: 3}
       propertyPath: m_DynamicOccludee

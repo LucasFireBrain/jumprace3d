@@ -27,7 +27,6 @@ public class GameController : MonoBehaviour {
             GameObject.Destroy(this.gameObject);
             return;
         }
-        PlayerPrefs.DeleteAll();
 
         //Player Prefs
         if (PlayerPrefs.HasKey("CurrentLevel")) {
@@ -70,4 +69,5 @@ public class GameController : MonoBehaviour {
         Players = Players.OrderByDescending(p => p.GetProgress()).ToList();
         UIController.UpdateRankText();
     }
+
 }

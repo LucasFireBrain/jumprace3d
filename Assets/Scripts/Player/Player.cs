@@ -16,6 +16,9 @@ public class Player : MonoBehaviour, IPlayer {
     private float _progress;
     private int _bounceCount;
 
+    //INPUT
+    private float _dragFactor = 10000;
+
     //LOGIC
     private Vector2 _previousTouchPos;
     private bool _isDead;
@@ -38,6 +41,9 @@ public class Player : MonoBehaviour, IPlayer {
 
     // Start is called before the first frame update
     void Start() {
+        Debug.Log("DPI: " + Screen.dpi);
+        Debug.Log("RES: " + Screen.width);
+
         _rigidbody = GetComponent<Rigidbody>();
         transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
         _rigidbody.useGravity = false;
@@ -89,7 +95,7 @@ public class Player : MonoBehaviour, IPlayer {
             //move forward
             _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
             //Rotate
-            float xDelta = Input.mousePosition.x - _previousTouchPos.x;
+            float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor / Screen.dpi;
             _previousTouchPos = Input.mousePosition;
             transform.Rotate(Vector3.up, xDelta);
         }

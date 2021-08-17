@@ -60,14 +60,14 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
     // Update is called once per frame
     void Update() {
 #if UNITY_EDITOR    //For testing on editor with mouse
-        //{ //Process input and move only after started or if player is not dead
-        //    if (_isStarted && !_isDead) MoveAndRotate();
-        //    if (!_isStarted) {
-        //        if (Input.GetMouseButtonUp(0)) {
-        //            OnTap(new Touch());
-        //        }
-        //    }
-        //}
+        { //Process input and move only after started or if player is not dead
+            if (_isStarted && !_isDead) MoveAndRotate();
+            if (!_isStarted) {
+                if (Input.GetMouseButtonUp(0)) {
+                    OnTap(new Touch());
+                }
+            }
+        }
 #endif
         //Fall
         if (!_isEnteredWater && transform.position.y < -0.1f) {
@@ -246,11 +246,13 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
         return name;
     }
     public void Die() {
-        //Set Ragdoll
         Camera.main.transform.SetParent(null);
         _progress = 0;
         _isDead = true;
         GameController.Main.GameOver(false);
+
+        //Ragdoll
+        GetComponentInChildren<RagDollController>().EnableRagdoll();
     }
 
 }

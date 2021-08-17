@@ -11,11 +11,10 @@ public class Blades : MonoBehaviour {
         transform.Rotate(0, 0, Time.deltaTime * _rotationSpeed);
     }
 
-    IEnumerator OnCollisionEnter(Collision collision) {
+    void OnCollisionEnter(Collision collision) {
         Player player = collision.rigidbody.GetComponent<Player>();
         if (player != null) {
             collision.rigidbody.AddExplosionForce(20, collision.GetContact(0).point, 4);
-            yield return new WaitForSeconds(1f);
             player.Die();
         }
     }

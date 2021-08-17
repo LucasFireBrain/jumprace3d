@@ -43,6 +43,12 @@ public class GameController : MonoBehaviour, ITouchHandler {
         InputManager.TouchHandlers.Add(this);
     }
 
+#if UNITY_EDITOR
+    void Update() {
+        if (Input.GetMouseButtonDown(0)) OnTap(new Touch());
+    }
+#endif
+
     public void OnTouch(Touch touch) {}
 
     public void OnTap(Touch touch) {
@@ -52,10 +58,10 @@ public class GameController : MonoBehaviour, ITouchHandler {
     }
 
     void Restart() {
-        InputManager.TouchHandlers.Clear();
+        SceneManager.LoadScene(0);
 
         //Reset static variables
-        SceneManager.LoadScene(0);
+        InputManager.TouchHandlers.Clear();
         AiPlayer.AiIndex = 0;
     }
 

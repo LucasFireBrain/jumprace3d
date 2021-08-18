@@ -96,7 +96,7 @@ public class LevelGenerator : MonoBehaviour {
                 if (_dice.Next(0, 100) < 20) {
                     GameObject blades = Instantiate(BladesPrefab);
                     blades.transform.position = midPoint;
-                    blades.transform.forward = platform.forward;
+                    blades.transform.forward = _previousPlatform.forward;
                 }
 
             }

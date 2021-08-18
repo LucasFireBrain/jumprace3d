@@ -190,9 +190,8 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
             }
 
             if (platform is BottomPlatform) {
-                //Normal Speed;
-                _jumpHeight = _baseJumpHeight * 4;
-                _speed = _baseSpeed / 3;
+                _jumpHeight = _baseJumpHeight * 3.5f;
+                _speed = _baseSpeed / 2.5f;
             }
 
             else if (platform is GoalPlatform) {
@@ -202,14 +201,13 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
                 GameController.Main.GameOver(true);
                 _animator.Play("Idle");
             }
-            else {  //platform is NormalPlatforms
+            else {  //platform is Normal Platform
                 //Bonus Speed
                 if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.2f) {
                     Debug.Log("PERFECT");
                     _jumpHeight = _baseJumpHeight * 1.3f;
                     _speed = _baseSpeed * 1.3f;
-                    //Rocket shoes particles
-                    FireRockets();
+                    FireRockets();  //Rocket shoes particles
                 }
                 else if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.3f) {
                     Debug.Log("GOOD");

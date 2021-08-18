@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour, ITouchHandler {
             GameObject.Destroy(this.gameObject);
             return;
         }
-
+        PlayerPrefs.DeleteAll();
         //Player Prefs
         if (PlayerPrefs.HasKey("CurrentLevel")) {
             CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");

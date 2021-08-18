@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LevelGenerator : MonoBehaviour {
     
@@ -112,7 +113,7 @@ public class LevelGenerator : MonoBehaviour {
 
             //Platform Label
             GameObject label = Instantiate(PlatformLabelPrefab, platform);
-            label.GetComponentInChildren<TextMesh>().text = (_platformCount - i).ToString();
+            label.GetComponentInChildren<TextMeshPro>().text = (_platformCount - i).ToString();
 
             //Prepare for next iteration
             _previousPlatform = platform;

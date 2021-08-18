@@ -21,6 +21,7 @@ Graphics include Textures, Materials, Animations and 3D models
 2. Line Renderer. I also would add a curve to the path, either by adding more points, or by making a *Bezier Curve* shader/script.
 3. AI. I would dedicate a lot more time to improve AI. make more different styles of AI, some more passive and some more agressive.
 4. Animations. I would spend a bit more in creating better animations for the flips. Right now it feels too repetitive and having more flips would definetily make it more fun.
+5. Particles. I didn't create enough textures for particles. With some nice toon textures and spritesheet animations the particle effects would look much better.
 
 ## What I am proud of
 1. Level Generation. I made a seed-based level generation, so it is random, but you can remember which seeds gave you a level you liked and save that seed so you can always play the best levels.

@@ -205,12 +205,14 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
                 //Bonus Speed
                 if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.2f) {
                     Debug.Log("PERFECT");
+                    GameController.Main.UIController.ShowPowerup(0);
                     _jumpHeight = _baseJumpHeight * 1.3f;
                     _speed = _baseSpeed * 1.3f;
                     FireRockets();  //Rocket shoes particles
                 }
                 else if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.3f) {
                     Debug.Log("GOOD");
+                    GameController.Main.UIController.ShowPowerup(1);
                     _jumpHeight = _baseJumpHeight * 1.15f;
                     _speed = _baseSpeed * 1.15f;
                 }

@@ -4,9 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour {
+
     public GameObject StartPanel;
     public GameObject InstructionPanel;
     public GameObject GameOverPanel;
+    public GameObject PerfectPowerup;
+    public GameObject GoodPowerup;
+
     public Text GameOverTitle;
 
     public Image ProgressBar;
@@ -95,6 +99,19 @@ public class UIController : MonoBehaviour {
                 GameOverRanks[i].text = "You";
                 if (i != 0) GameOverRanks[i].transform.parent.GetComponent<Image>().color = new Color(0.88f, 0.36f, 0.13f);
             }
+        }
+    }
+
+    public void ShowPowerup(int index) {
+        switch (index) {
+            case 0:
+                PerfectPowerup.GetComponent<Animator>().Play("FadeIn");
+                break;
+            case 1:
+                GoodPowerup.GetComponent<Animator>().Play("FadeIn");
+                break;
+            default:
+                break;
         }
     }
 }

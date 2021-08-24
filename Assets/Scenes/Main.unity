@@ -3369,16 +3369,25 @@ MonoBehaviour:
   StartPanel: {fileID: 941501142}
   InstructionPanel: {fileID: 44076228}
   GameOverPanel: {fileID: 1155770661}
-  PerfectPowerup: {fileID: 1095223525}
-  GoodPowerup: {fileID: 1658436587}
+  PerfectPowerup: {fileID: 1095223527}
+  GoodPowerup: {fileID: 1658436589}
+  LongJumpPowerup: {fileID: 1402331892}
   GameOverTitle: {fileID: 1322508881}
   ProgressBar: {fileID: 254632834}
   CurrentLevel: {fileID: 1532763063}
   NextLevel: {fileID: 1252397765}
-  Ranks:
-  - {fileID: 1289542923}
-  - {fileID: 376587057}
-  - {fileID: 389474702}
+  RankNames:
+  - {fileID: 106632605}
+  - {fileID: 1031907811}
+  - {fileID: 1072067137}
+  RankPlaces:
+  - {fileID: 1493217684}
+  - {fileID: 1242757637}
+  - {fileID: 445956195}
+  RankBgImages:
+  - {fileID: 1289542924}
+  - {fileID: 376587058}
+  - {fileID: 389474703}
   GameOverRanks:
   - {fileID: 1556109796}
   - {fileID: 1246243559}
@@ -3464,6 +3473,7 @@ RectTransform:
   - {fileID: 1155770662}
   - {fileID: 1095223526}
   - {fileID: 1658436588}
+  - {fileID: 1402331891}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4943,9 +4953,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIController: {fileID: 955250808}
-  IsGameOver: 0
+  IsStarted: 0
   IsTapToContinue: 0
   IsLevelCleared: 0
+  IsGameOver: 0
   CurrentLevel: 0
 --- !u!114 &1294929948
 MonoBehaviour:
@@ -4959,6 +4970,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2749132623948347852054dc8c0dab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tapTresh: 0.16
+  _tapTimer: 0
 --- !u!1 &1322508879
 GameObject:
   m_ObjectHideFlags: 0
@@ -5464,6 +5477,105 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1371962959}
+  m_CullTransparentMesh: 1
+--- !u!1 &1402331890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1402331891}
+  - component: {fileID: 1402331894}
+  - component: {fileID: 1402331893}
+  - component: {fileID: 1402331892}
+  m_Layer: 5
+  m_Name: Long Jump
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1402331891
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402331890}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 955250812}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1000, y: 600}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!95 &1402331892
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402331890}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9b42f00b60d38044eb462ee52aa9f01b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1402331893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402331890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.52558994, g: 0, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 7fe9b89bc4e4c04489473cd0322e009f, type: 3}
+    m_FontSize: 150
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 150
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Long Jump!
+--- !u!222 &1402331894
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402331890}
   m_CullTransparentMesh: 1
 --- !u!1 &1463300551
 GameObject:

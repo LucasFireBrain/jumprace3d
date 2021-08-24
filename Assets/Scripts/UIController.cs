@@ -8,8 +8,9 @@ public class UIController : MonoBehaviour {
     public GameObject StartPanel;
     public GameObject InstructionPanel;
     public GameObject GameOverPanel;
-    public GameObject PerfectPowerup;
-    public GameObject GoodPowerup;
+    public Animator PerfectPowerup;
+    public Animator GoodPowerup;
+    public Animator LongJumpPowerup;
 
     public Text GameOverTitle;
 
@@ -18,7 +19,9 @@ public class UIController : MonoBehaviour {
     public Text NextLevel;
 
     //Ranking
-    public List<Transform> Ranks;
+    public List<Text> RankNames;
+    public List<Text> RankPlaces;
+    public List<Image> RankBgImages;
     public List<Text> GameOverRanks;
 
     // Start is called before the first frame update
@@ -65,24 +68,24 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < GameController.Main.Players.Count; i++) {
             IPlayer player = GameController.Main.Players[i];
 
-            if (i < Ranks.Count) {
+            if (i < RankNames.Count) {
                 if (player is Player) {
-                    Ranks[i].Find("Name").GetComponent<Text>().text = "You";
-                    Ranks[i].GetComponent<Image>().color = new Color(0, 0, 0, 0.7f);
+                    RankNames[i].text = "You";
+                    RankBgImages[i].color = new Color(0, 0, 0, 0.7f);
                 }
-                else { 
-                    Ranks[i].Find("Name").GetComponent<Text>().text = player.GetName();
-                    Ranks[i].GetComponent<Image>().color = new Color(0, 0, 0, 0.3f);
+                else {
+                    RankNames[i].text = player.GetName();
+                    RankBgImages[i].GetComponent<Image>().color = new Color(0, 0, 0, 0.3f);
                 }
-                Ranks[i].Find("Place").GetComponent<Text>().text = (i + 1).ToString();
+                RankPlaces[i].text = (i + 1).ToString();
             }
 
             //Always show player
             if (player is Player) {
                 if (i > 2) {
-                    Ranks[2].Find("Name").GetComponent<Text>().text = "You";
-                    Ranks[2].Find("Place").GetComponent<Text>().text = (i+1).ToString();
-                    Ranks[2].GetComponent<Image>().color = new Color(0, 0, 0, 0.7f);
+                    RankNames[2].text = "You";
+                    RankPlaces[2].text = (i+1).ToString();
+                    RankBgImages[2].color = new Color(0, 0, 0, 0.7f);
                 }
             }
         }
@@ -105,10 +108,13 @@ public class UIController : MonoBehaviour {
     public void ShowPowerup(int index) {
         switch (index) {
             case 0:
-                PerfectPowerup.GetComponent<Animator>().Play("FadeIn");
+                PerfectPowerup.Play("FadeIn");
                 break;
             case 1:
-                GoodPowerup.GetComponent<Animator>().Play("FadeIn");
+                GoodPowerup.Play("FadeIn");
+                break;
+            case 2:
+                LongJumpPowerup.Play("FadeIn");
                 break;
             default:
                 break;

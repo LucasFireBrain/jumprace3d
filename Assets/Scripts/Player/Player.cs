@@ -81,6 +81,10 @@ public class Player : MonoBehaviour, IPlayer {
         if (_autoRotateRoutine != null) StopCoroutine(_autoRotateRoutine);
         _isAutoRotate = false;
     }
+    IEnumerator StartAutoRotateRoutine() {
+        yield return new WaitForSeconds(0.25f);
+        _isAutoRotate = true;
+    }
     void MoveAndRotate() {
         //TOUCH INPUT
         if (Input.touchCount > 0) {
@@ -126,11 +130,7 @@ public class Player : MonoBehaviour, IPlayer {
     void SetCurrentPlatform(Platform platform) {
         _currentPlatform = platform;
         _bounceCount = 0;
-        _autoRotateRoutine = StartCoroutine(SetAutoRotateRoutine());
-    }
-    IEnumerator SetAutoRotateRoutine() {
-        yield return new WaitForSeconds(0.25f);
-        _isAutoRotate = true;
+        _autoRotateRoutine = StartCoroutine(StartAutoRotateRoutine());
     }
     void EnterWater() {
         WaterParticles.SetActive(true);
@@ -143,8 +143,12 @@ public class Player : MonoBehaviour, IPlayer {
         Platform platform = collision.transform.GetComponentInParent<Platform>();
         if (platform != null) {
 
-            if (_currentPlatform != null && _currentPlatform.Next != null && platform != _currentPlatform.Next) { 
+            if (_currentPlatform != null 
+                && _currentPlatform.Next != null 
+                && platform != _currentPlatform 
+                && platform != _currentPlatform.Next) {
                 //LONG JUMP
+                GameController.Main.UIController.ShowPowerup(2);
             }
 
             if (_currentPlatform != platform) {

@@ -16,8 +16,8 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     private float _bounceCount;
 
     //MOVEMENT
-    private float _baseSpeed = 7f;
-    private float _speed = 7;
+    private float _baseSpeed = 3f;
+    private float _speed = 3;
     private float _baseJumpHeight = 7;
     private float _jumpHeight;
     private float _autoRotationSpeed = 1;
@@ -25,11 +25,13 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     //AUTO ROTATE
     private bool _isAutoRotate = true;
     private float _autoRotateDelta;
+    private float _autoRotateSpeed;
     private Coroutine _autoRotateRoutine;
 
     // Start is called before the first frame update
     void Start() {
         _rigidbody = GetComponent<Rigidbody>();
+        _rigidbody.useGravity = false;
 
         _currentPlatform = LevelGenerator.StartingPlatform.GetComponent<Platform>();
         for (int i = 0; i <= AiIndex; i++) {
@@ -57,15 +59,16 @@ public class AiPlayer : MonoBehaviour, IPlayer {
 
     // Update is called once per frame
     void Update() {
-        if (GameController.Main.IsStarted) { 
-            if (_currentPlatform != null && _currentPlatform.Next != null) { 
-                transform.LookAt(_currentPlatform.Next.transform.position.withY(transform.position.y)); //Look forward at the next platform
-
+        if (GameController.Main.IsStarted) {
+            if (_currentPlatform != null && _currentPlatform.Next != null) {
+                transform.LookAt(_currentPlatform.Next.transform.position.withY(transform.position.y));
                 //Move after a number of bounces
                 if (_bounceCount > Random.Range(0, 2)) {
                     //Check distance between AI and Next Platform on XY Plane
                     if (transform.position.DistanceXY(_currentPlatform.Next.transform.position) > 0.05f) {
-                        _rigidbody.MovePosition(transform.position + transform.forward * Time.deltaTime * _speed);
+                        Vector3 targetPos = _currentPlatform.Next.transform.position.withY(transform.position.y);
+                        Vector3 moveVector = Vector3.Lerp(transform.position, targetPos, _speed * Time.deltaTime);
+                        _rigidbody.MovePosition(moveVector);
                     }
                 }
             }
@@ -113,6 +116,9 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     }
 
     public void StartGame() {
-        _isStarted = true;
+        if (!_isStarted) {
+            _isStarted = true;
+            _rigidbody.useGravity = true;
+        }
     }
 }

@@ -58,7 +58,7 @@ public class Player : MonoBehaviour, IPlayer {
 
         if (_isStarted && !_isDead) MoveAndRotate();                        //Move and Rotate
         if (_isAutoRotate) AutoRotate();                                    //Auto Rotate
-        if (Input.GetMouseButtonDown(0)) StopAutoRotate();                  //Stop Auto Rotate
+        if (Input.GetMouseButton(0)) StopAutoRotate();                      //Stop Auto Rotate
         if (!_isEnteredWater && transform.position.y < -0.1f) EnterWater(); //Fall and die
 
     }
@@ -76,8 +76,8 @@ public class Player : MonoBehaviour, IPlayer {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _autoRotateSpeed * Time.deltaTime);
         }
     }
-
     void StopAutoRotate() {
+        if (!_isAutoRotate) return;
         if (_autoRotateRoutine != null) StopCoroutine(_autoRotateRoutine);
         _isAutoRotate = false;
     }
@@ -123,7 +123,6 @@ public class Player : MonoBehaviour, IPlayer {
             rocket.Play();
         }
     }
-
     void SetCurrentPlatform(Platform platform) {
         _currentPlatform = platform;
         _bounceCount = 0;
@@ -133,18 +132,20 @@ public class Player : MonoBehaviour, IPlayer {
         yield return new WaitForSeconds(0.25f);
         _isAutoRotate = true;
     }
-
     void EnterWater() {
         WaterParticles.SetActive(true);
         Die();
     }
-
     void OnCollisionEnter(Collision collision) {
         //Collision with other players
 
         //Collision with Platform
         Platform platform = collision.transform.GetComponentInParent<Platform>();
         if (platform != null) {
+
+            if (_currentPlatform != null && _currentPlatform.Next != null && platform != _currentPlatform.Next) { 
+                //LONG JUMP
+            }
 
             if (_currentPlatform != platform) {
                 SetCurrentPlatform(platform);
@@ -158,6 +159,8 @@ public class Player : MonoBehaviour, IPlayer {
             else if (platform is GoalPlatform) {
                 _jumpHeight = 0;
                 _speed = 0;
+                _progress = 1;
+                GameController.Main.UIController.SetProgress(_progress);
                 //Win
                 GameController.Main.GameOver(true);
                 _animator.Play("Idle");
@@ -165,14 +168,12 @@ public class Player : MonoBehaviour, IPlayer {
             else {  //platform is Normal Platform
                 //Bonus Speed
                 if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.2f) {
-                    Debug.Log("PERFECT");
                     GameController.Main.UIController.ShowPowerup(0);
                     _jumpHeight = _baseJumpHeight * 1.3f;
                     _speed = _baseSpeed * 1.3f;
                     FireRockets();  //Rocket shoes particles
                 }
                 else if (_bounceCount == 0 && transform.position.DistanceXY(platform.transform.position) < 0.3f) {
-                    Debug.Log("GOOD");
                     GameController.Main.UIController.ShowPowerup(1);
                     _jumpHeight = _baseJumpHeight * 1.15f;
                     _speed = _baseSpeed * 1.15f;

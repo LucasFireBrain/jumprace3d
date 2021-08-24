@@ -4,18 +4,21 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour, ITouchHandler {
+public class GameController : MonoBehaviour {
     public static GameController Main;
 
     public UIController UIController;
 
     public List<IPlayer> Players = new List<IPlayer>();
 
-    public bool IsGameOver;
+    public bool IsStarted;
     public bool IsTapToContinue;
     public bool IsLevelCleared;
+    public bool IsGameOver;
 
     public int CurrentLevel;
+
+    private bool _isShowingInstructions;
 
 
     // Start is called before the first frame update
@@ -38,30 +41,35 @@ public class GameController : MonoBehaviour, ITouchHandler {
 
         //UI
         UIController.SetLevelText(CurrentLevel);
-
-        //Add to Input Manager
-        InputManager.TouchHandlers.Add(this);
     }
 
 #if UNITY_EDITOR
     void Update() {
-        if (Input.GetMouseButtonDown(0)) OnTap(new Touch());
+        if (Input.GetMouseButtonDown(0)) {
+            if (_isShowingInstructions) HideInstructions();
+            if (!IsStarted) StartGame();
+            if (IsTapToContinue) Restart();
+        }
     }
 #endif
 
-    public void OnTouch(Touch touch) {}
+    void StartGame() {
+        IsStarted = true;
+        foreach (IPlayer player in Players) player.StartGame();
+        UIController.StartPanel.SetActive(false);   //Hide "Tap to Start"
+        UIController.InstructionFade(true);         //Show "Hold to move forward"
+        _isShowingInstructions = true;
+    }
 
-    public void OnTap(Touch touch) {
-        if (IsTapToContinue) {
-            Restart();
-        }
+    void HideInstructions() {
+        _isShowingInstructions = false;
+        UIController.InstructionFade(false);    //Hide "Hold to Move Forward"
     }
 
     void Restart() {
         SceneManager.LoadScene(0);
 
         //Reset static variables
-        InputManager.TouchHandlers.Clear();
         AiPlayer.AiIndex = 0;
     }
 

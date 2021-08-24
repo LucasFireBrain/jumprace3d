@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour, IPlayer, ITouchHandler {
+public class Player : MonoBehaviour, IPlayer {
 
     //REFERENCES
     private Animator _animator;
@@ -36,22 +36,18 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
 
     //AUTO ROTATE
     private Coroutine _autoRotateRoutine;
-    private float _autoRotationSpeed = 1;
+    private float _autoRotateSpeed = 150;
     private float _autoRotateDelta;
-    private bool _isAutoRotate = true;
+    private bool _isAutoRotate;
 
 
     // Start is called before the first frame update
     void Start() {
-
         //Initialize
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.useGravity = false;
         _animator = GetComponentInChildren<Animator>();
         transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
-
-        //Add to Input Manager
-        InputManager.TouchHandlers.Add(this);
 
         //Add to player list
         GameController.Main.Players.Add(this);
@@ -59,97 +55,62 @@ public class Player : MonoBehaviour, IPlayer, ITouchHandler {
 
     // Update is called once per frame
     void Update() {
-#if UNITY_EDITOR    //For testing on editor with mouse
-        { //Process input and move only after started or if player is not dead
-            if (_isStarted && !_isDead) MoveAndRotate();
-            if (!_isStarted) {
-                if (Input.GetMouseButtonUp(0)) {
-                    OnTap(new Touch());
-                }
-            }
-        }
-#endif
-        //Fall
-        if (!_isEnteredWater && transform.position.y < -0.1f) {
-             EnterWater();
-        }
+
+        if (_isStarted && !_isDead) MoveAndRotate();                        //Move and Rotate
+        if (_isAutoRotate) AutoRotate();                                    //Auto Rotate
+        if (Input.GetMouseButtonDown(0)) StopAutoRotate();                  //Stop Auto Rotate
+        if (!_isEnteredWater && transform.position.y < -0.1f) EnterWater(); //Fall and die
+
     }
-    public void OnTouch(Touch touch) {
-        if (_isStarted && !_isDead) MoveAndRotate(touch);
-    }
-    public void OnTap(Touch touch) {
+
+    public void StartGame() {
         if (!_isStarted) {
             _isStarted = true;
             _rigidbody.useGravity = true;
-            GameController.Main.UIController.StartPanel.SetActive(false);
-            GameController.Main.UIController.InstructionFade(true);             //Show instructions
+        }
+    }
+    void AutoRotate() {
+        if (_currentPlatform != null && _currentPlatform.Next != null) { 
+            Vector3 forward = (_currentPlatform.Next.transform.position - _currentPlatform.transform.position).withY(0);
+            Quaternion targetRotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _autoRotateSpeed * Time.deltaTime);
         }
     }
 
-    void MoveAndRotate(Touch touch) {
-        if (touch.phase == TouchPhase.Began) {
-            if (!_hasMoved) {   //Hide Instructions
-                _hasMoved = true;
-                GameController.Main.UIController.InstructionFade(false);    
+    void StopAutoRotate() {
+        if (_autoRotateRoutine != null) StopCoroutine(_autoRotateRoutine);
+        _isAutoRotate = false;
+    }
+    void MoveAndRotate() {
+        //TOUCH INPUT
+        if (Input.touchCount > 0) {
+            if (Input.touches[0].phase == TouchPhase.Began) {
+                _previousTouchPos = Input.touches[0].position;
             }
-            _previousTouchPos = touch.position;
-            _autoRotateDelta = 0;
-
-            if (_autoRotateRoutine != null) {     //Stop auto rotate
-                StopCoroutine(_autoRotateRoutine);
+            else if (Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary) {
+                //move forward
+                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+                //Rotate
+                float xDelta = (Input.touches[0].position.x - _previousTouchPos.x) / Screen.width * _dragFactor;
+                _previousTouchPos = Input.touches[0].position;
+                transform.Rotate(Vector3.up, xDelta);
             }
-            _isAutoRotate = false;
         }
-        else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
-            //move forward
-            _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
-            //Rotate
-            float xDelta = (touch.position.x - _previousTouchPos.x) / Screen.width * _dragFactor;
-            _previousTouchPos = touch.position;
-            transform.Rotate(Vector3.up, xDelta);
-        }
-        else if (_isAutoRotate && _currentPlatform != null) {
-            float currentAngle = transform.eulerAngles.y;
-            float targetAngle = _currentPlatform.transform.eulerAngles.y;
-            _autoRotateDelta += Time.deltaTime * _autoRotationSpeed;
-            float angle = Mathf.LerpAngle(currentAngle, targetAngle, _autoRotateDelta);
-            transform.eulerAngles = transform.eulerAngles.withY(angle);
+        //MOUSE INPUT
+        else {
+            if (Input.GetMouseButtonDown(0)) {
+                _previousTouchPos = Input.mousePosition;
+            }
+            else if (Input.GetMouseButton(0)) {
+                //move forward
+                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+                //Rotate
+                float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor;
+                _previousTouchPos = Input.mousePosition;
+                transform.Rotate(Vector3.up, xDelta);
+            }
         }
     }
-
-#if UNITY_EDITOR
-    void MoveAndRotate() {   //Move with mouse, for editor testing or web version
-
-        if (Input.GetMouseButtonDown(0)) {
-            if (!_hasMoved) {
-                _hasMoved = true;
-                GameController.Main.UIController.InstructionFade(false);    //Hide Instructions
-            }
-            _previousTouchPos = Input.mousePosition;
-            _autoRotateDelta = 0;
-            //Stop auto rotate
-            if (_autoRotateRoutine != null) {
-                StopCoroutine(_autoRotateRoutine);
-            }
-            _isAutoRotate = false;
-        }
-        else if (Input.GetMouseButton(0)) {
-            //move forward
-            _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
-            //Rotate
-            float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor;
-            _previousTouchPos = Input.mousePosition;
-            transform.Rotate(Vector3.up, xDelta);
-        }
-        else if (_isAutoRotate && _currentPlatform != null ) {
-            float currentAngle = transform.eulerAngles.y;
-            float targetAngle = _currentPlatform.transform.eulerAngles.y;
-            _autoRotateDelta += Time.deltaTime * _autoRotationSpeed;
-            float angle = Mathf.LerpAngle(currentAngle, targetAngle, _autoRotateDelta);
-            transform.eulerAngles = transform.eulerAngles.withY(angle);
-        }
-    }
-#endif
 
     void BounceUp() {
         //Apply force upwards.

@@ -11,9 +11,9 @@ public class Player : MonoBehaviour, IPlayer {
     private Rigidbody _rigidbody;
   
     //PARTICLES
+    public GameObject WaterParticles;   //Used by enabling game object
     public ParticleSystem DustParticles;
     public ParticleSystem[] Rockets;
-    public GameObject WaterParticles;   //Used by enabling game object
 
 
     //INPUT
@@ -119,7 +119,10 @@ public class Player : MonoBehaviour, IPlayer {
     void BounceUp() {
         //Apply force upwards.
         _rigidbody.velocity = Vector3.up * _jumpHeight;
-        _animator.Play("Flip_01");
+        if (Random.Range(0, 2) == 0) { 
+            _animator.Play("Flip_01");
+        }
+        else _animator.Play("Flip_02");
     }
 
     void FireRockets() {

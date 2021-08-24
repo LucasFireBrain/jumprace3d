@@ -5,7 +5,8 @@ using UnityEngine;
 public class AiPlayer : MonoBehaviour, IPlayer {
     public static int AiIndex;
 
-    public ParticleSystem _dustParticles;
+    public ParticleSystem DustParticles;
+    public Renderer Renderer;
 
     private Rigidbody _rigidbody;
     private Animator _animator;
@@ -16,8 +17,8 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     private float _bounceCount;
 
     //MOVEMENT
-    private float _baseSpeed = 3f;
-    private float _speed = 3;
+    private float _baseSpeed = 5f;
+    private float _speed = 5;
     private float _baseJumpHeight = 7;
     private float _jumpHeight;
     private float _autoRotationSpeed = 1;
@@ -44,7 +45,7 @@ public class AiPlayer : MonoBehaviour, IPlayer {
 
         _animator = GetComponentInChildren<Animator>();
         //Set random color
-        GetComponentInChildren<Renderer>().material.SetColor("_Color", Random.ColorHSV());
+        Renderer.material.SetColor("_Color", Random.ColorHSV());
         AiIndex++;
 
         //Add to player list
@@ -57,8 +58,8 @@ public class AiPlayer : MonoBehaviour, IPlayer {
         _animator.Play("Flip_01");
     }
 
-    // Update is called once per frame
-    void Update() {
+    // Use FixedUpdate to better handle physics.
+    void FixedUpdate() {
         if (GameController.Main.IsStarted) {
             if (_currentPlatform != null && _currentPlatform.Next != null) {
                 transform.LookAt(_currentPlatform.Next.transform.position.withY(transform.position.y));
@@ -66,13 +67,14 @@ public class AiPlayer : MonoBehaviour, IPlayer {
                 if (_bounceCount > Random.Range(0, 2)) {
                     //Check distance between AI and Next Platform on XY Plane
                     if (transform.position.DistanceXY(_currentPlatform.Next.transform.position) > 0.05f) {
-                        Vector3 targetPos = _currentPlatform.Next.transform.position.withY(transform.position.y);
+                        Vector3 targetPos = _currentPlatform.Next.transform.position.withY(transform.position.y).RandomOffset(0.2f, 0, 0.2f);
                         Vector3 moveVector = Vector3.Lerp(transform.position, targetPos, _speed * Time.deltaTime);
                         _rigidbody.MovePosition(moveVector);
                     }
                 }
             }
         }
+        if (transform.position.y < -1) _rigidbody.isKinematic = true;
     }
     void OnCollisionEnter(Collision collision) {
         Platform platform = collision.transform.GetComponentInParent<Platform>();
@@ -101,7 +103,7 @@ public class AiPlayer : MonoBehaviour, IPlayer {
                 _jumpHeight = _baseJumpHeight;
                 _speed = _baseSpeed;
             }
-            _dustParticles.Play();
+            DustParticles.Play();
 
             BounceUp();
         }

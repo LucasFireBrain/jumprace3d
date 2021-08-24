@@ -6,6 +6,7 @@ public class RagDollController : MonoBehaviour
 {
     public Animator Animator;
     public Rigidbody[] Rigidbodies;
+    public Collider[] Colliders;
     
     public void EnableRagdoll() {
         //Create parent reference
@@ -24,9 +25,11 @@ public class RagDollController : MonoBehaviour
         for (int i = 0; i < Rigidbodies.Length; i++) {
             Rigidbody rb = Rigidbodies[i];
             rb.isKinematic = false;
-            if(rb.GetComponent<Collider>() != null) rb.GetComponent<Collider>().enabled = true;
             //Add random force to each part
             rb.AddForce(Vector3.zero.RandomOffset(10, 10, 10) * 30);
+        }
+        foreach (Collider collider in Colliders) {
+            collider.enabled = true;
         }
     }
 }

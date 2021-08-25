@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
             GameObject.Destroy(this.gameObject);
             return;
         }
-        PlayerPrefs.DeleteAll();
+
         //Player Prefs
         if (PlayerPrefs.HasKey("CurrentLevel")) {
             CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");
@@ -43,15 +43,13 @@ public class GameController : MonoBehaviour {
         UIController.SetLevelText(CurrentLevel);
     }
 
-#if UNITY_EDITOR
     void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Ended)) {
             if (_isShowingInstructions) HideInstructions();
             if (!IsStarted) StartGame();
             if (IsTapToContinue) Restart();
         }
     }
-#endif
 
     void StartGame() {
         IsStarted = true;

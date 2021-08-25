@@ -58,10 +58,11 @@ public class Player : MonoBehaviour, IPlayer {
         if (_isAutoRotate) AutoRotate();                                    //Auto Rotate
         if (Input.GetMouseButton(0)) StopAutoRotate();                      //Stop Auto Rotate
         if (!_isEnteredWater && transform.position.y < -0.1f) EnterWater(); //Fall and die
+        if (_isStarted && !_isDead) Rotate();                               //Rotate
     }
 
-    void FixedUpdate() { 
-        if (_isStarted && !_isDead) MoveAndRotate();                        //Move and Rotate
+    void FixedUpdate() {
+        if (_isStarted && !_isDead) Move();
     }
 
     public void StartGame() {
@@ -71,7 +72,8 @@ public class Player : MonoBehaviour, IPlayer {
         }
     }
     void AutoRotate() {
-        if (_currentPlatform != null && _currentPlatform.Next != null) { 
+        if (_currentPlatform != null && _currentPlatform.Next != null) {
+            Debug.Log("AUTOROTATE");
             Vector3 forward = (_currentPlatform.Next.transform.position - _currentPlatform.transform.position).withY(0);
             Quaternion targetRotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _autoRotateSpeed * Time.deltaTime);
@@ -86,15 +88,29 @@ public class Player : MonoBehaviour, IPlayer {
         yield return new WaitForSeconds(0.25f);
         _isAutoRotate = true;
     }
-    void MoveAndRotate() {
+    void Move() {
+        //TOUCH INPUT
+        if (Input.touchCount > 0) {
+            if (Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary) {
+                //move forward
+                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+            }
+        }
+        //MOUSE INPUT
+        else {
+            if (Input.GetMouseButton(0)) {
+                //move forward
+                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+            }
+        }
+    }
+    void Rotate() {
         //TOUCH INPUT
         if (Input.touchCount > 0) {
             if (Input.touches[0].phase == TouchPhase.Began) {
                 _previousTouchPos = Input.touches[0].position;
             }
             else if (Input.touches[0].phase == TouchPhase.Moved || Input.touches[0].phase == TouchPhase.Stationary) {
-                //move forward
-                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
                 //Rotate
                 float xDelta = (Input.touches[0].position.x - _previousTouchPos.x) / Screen.width * _dragFactor;
                 _previousTouchPos = Input.touches[0].position;
@@ -107,8 +123,6 @@ public class Player : MonoBehaviour, IPlayer {
                 _previousTouchPos = Input.mousePosition;
             }
             else if (Input.GetMouseButton(0)) {
-                //move forward
-                _rigidbody.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
                 //Rotate
                 float xDelta = (Input.mousePosition.x - _previousTouchPos.x) / Screen.width * _dragFactor;
                 _previousTouchPos = Input.mousePosition;

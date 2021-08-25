@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Dreamteck.Splines;
 
 public class LevelGenerator : MonoBehaviour {
     
@@ -14,6 +15,8 @@ public class LevelGenerator : MonoBehaviour {
     public GameObject PlatformLabelPrefab;
     public GameObject BladesPrefab;
     public GameObject GoalPrefab;
+    public GameObject Spline;
+    public Material SplineMaterial;
     public LineRenderer Line;
 
     private Transform _previousPlatform;
@@ -59,6 +62,9 @@ public class LevelGenerator : MonoBehaviour {
 
         Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform // times 2 is for the midPoints
 
+        SplineComputer splineComputer = Spline.AddComponent<SplineComputer>();
+        SplinePoint[] points = new SplinePoint[_platformCount];
+
         for (int i = 0; i < _platformCount; i++) {
             Transform platform;
 
@@ -88,9 +94,11 @@ public class LevelGenerator : MonoBehaviour {
                 _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
 
                 //Line renderer
-                Line.SetPosition(2 * i - 2, _previousPlatform.position);
+                //Line.SetPosition(2 * i - 2, _previousPlatform.position);
                 Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position) / 2;
-                Line.SetPosition(2 * i - 1, midPoint);
+                //Line.SetPosition(2 * i - 1, midPoint);
+
+                
 
                 //Create Blades with 20% chance
                 if (_dice.Next(0, 100) < 20) {
@@ -118,6 +126,13 @@ public class LevelGenerator : MonoBehaviour {
             //Prepare for next iteration
             _previousPlatform = platform;
 
+            //Spline 
+            points[i] = new SplinePoint();
+            points[i].position = _previousPlatform.position;
+            points[i].normal = Vector3.up;
+            points[i].size = 0.15f;
+            points[i].color = Color.white;
+
             //Add to bounds
             _bounds.Encapsulate(platform.GetComponentInChildren<Renderer>().bounds);
 
@@ -144,8 +159,15 @@ public class LevelGenerator : MonoBehaviour {
             Line.SetPosition(Line.positionCount - 1, goal.transform.position);
         }
 
-
+        //Set Spline Points
+        splineComputer.SetPoints(points);
+        //Add spline renderer
+        Spline.AddComponent<SplineRenderer>().spline = splineComputer;
+        Spline.GetComponent<MeshRenderer>().material = SplineMaterial;
+        GameObject.Destroy(splineComputer, 0.5f);
     }
+
+
     // Update is called once per frame
     void Update() {
 

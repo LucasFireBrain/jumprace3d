@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BreakablePlatform : Platform {
+    public MeshCollider MeshCollider;
     public override void Bounce() {
         //Disable Platform
-        GetComponent<MeshCollider>().enabled = false;
+        MeshCollider.enabled = false;
 
         //Add phyisics to pieces
         foreach (Transform t in transform) {
@@ -14,7 +15,7 @@ public class BreakablePlatform : Platform {
         }
        
         //Keep Linked List of platforms
-        Platform temp = LevelGenerator.StartingPlatform.GetComponent<Platform>();
+        Platform temp = LevelGenerator.StartingPlatform;
         while (temp.Next != this) {
             temp = temp.Next;
         }

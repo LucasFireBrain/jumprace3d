@@ -79,6 +79,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DustParticles: {fileID: 7808024055086121287}
   Renderer: {fileID: 7009281932146954097}
+  _rigidbody: {fileID: 7808024054486956062}
+  _animator: {fileID: 4839438540212335782}
 --- !u!1001 &7808024054143683425
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -255,6 +257,11 @@ PrefabInstance:
 --- !u!4 &1569802861796994780 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8760244409942779325, guid: a276b7000fd58c049ab03bcbfff268a6, type: 3}
+  m_PrefabInstance: {fileID: 7808024054143683425}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &4839438540212335782 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3418952520851029959, guid: a276b7000fd58c049ab03bcbfff268a6, type: 3}
   m_PrefabInstance: {fileID: 7808024054143683425}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &7009281932146954097 stripped

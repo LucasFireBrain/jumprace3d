@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour {
     public Animator PerfectPowerup;
     public Animator GoodPowerup;
     public Animator LongJumpPowerup;
+    public Animator InstructionsAnimator;
 
     public Text GameOverTitle;
 
@@ -21,8 +22,9 @@ public class UIController : MonoBehaviour {
     //Ranking
     public List<Text> RankNames;
     public List<Text> RankPlaces;
-    public List<Image> RankBgImages;
+    public List<Image> RankBgs;
     public List<Text> GameOverRanks;
+    public List<Image> GameOverRanksBgs;
 
     // Start is called before the first frame update
     void Start() {
@@ -42,13 +44,12 @@ public class UIController : MonoBehaviour {
         NextLevel.text = (currentLevel + 1).ToString();
     }
 
-    public void InstructionFade(bool isFadeIn) {
-        Animator animator = InstructionPanel.GetComponent<Animator>();
+    public void InstructionFade(bool isFadeIn) {;
         if (isFadeIn) {
-            animator.Play("FadeIn");    //same animation, but states have 1 and -1 speed
+            InstructionsAnimator.Play("FadeIn");    //same animation, but states have 1 and -1 speed
         }
         else {
-            animator.Play("FadeOut");
+            InstructionsAnimator.Play("FadeOut");
         }
 
     }
@@ -71,11 +72,11 @@ public class UIController : MonoBehaviour {
             if (i < RankNames.Count) {
                 if (player is Player) {
                     RankNames[i].text = "You";
-                    RankBgImages[i].color = new Color(0, 0, 0, 0.7f);
+                    RankBgs[i].color = new Color(0, 0, 0, 0.7f);
                 }
                 else {
                     RankNames[i].text = player.GetName();
-                    RankBgImages[i].GetComponent<Image>().color = new Color(0, 0, 0, 0.3f);
+                    RankBgs[i].color = new Color(0, 0, 0, 0.3f);
                 }
                 RankPlaces[i].text = (i + 1).ToString();
             }
@@ -85,7 +86,7 @@ public class UIController : MonoBehaviour {
                 if (i > 2) {
                     RankNames[2].text = "You";
                     RankPlaces[2].text = (i+1).ToString();
-                    RankBgImages[2].color = new Color(0, 0, 0, 0.7f);
+                    RankBgs[2].color = new Color(0, 0, 0, 0.7f);
                 }
             }
         }
@@ -100,7 +101,7 @@ public class UIController : MonoBehaviour {
             }
             if (player is Player) {
                 GameOverRanks[i].text = "You";
-                if (i != 0) GameOverRanks[i].transform.parent.GetComponent<Image>().color = new Color(0.88f, 0.36f, 0.13f);
+                if (i != 0) GameOverRanksBgs[i].color = new Color(0.88f, 0.36f, 0.13f);
             }
         }
     }

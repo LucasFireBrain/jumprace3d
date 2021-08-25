@@ -8,13 +8,13 @@ public class BeamController : MonoBehaviour {
 
     private Color[] _colors = { new Color(1, 0, 0, 0.3f), new Color(1, 1, 0, 0.3f), new Color(0, 1, 0, 0.3f) };
 
-    private Renderer _renderer;
+    [SerializeField] private Renderer _renderer;
     private RaycastHit _hit;
     private Ray _ray;
 
     // Start is called before the first frame update
     void Start() {
-        _renderer = GetComponent<Renderer>();
+  
     }
 
     // Update is called once per frame

@@ -1302,6 +1302,7 @@ MonoBehaviour:
   Animator: {fileID: 0}
   Progress: 0
   IsUsed: 0
+  MeshCollider: {fileID: -3394280091098504550}
 --- !u!95 &3392336601613636011
 Animator:
   serializedVersion: 3

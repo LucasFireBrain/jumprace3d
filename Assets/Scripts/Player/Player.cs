@@ -6,10 +6,11 @@ using UnityEngine;
 public class Player : MonoBehaviour, IPlayer {
 
     //REFERENCES
-    private Animator _animator;
+    [SerializeField] private Animator _animator;
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private RagdollController _ragdoll;
     private Platform _currentPlatform;
-    private Rigidbody _rigidbody;
-  
+    
     //PARTICLES
     public GameObject WaterParticles;   //Used by enabling game object
     public ParticleSystem DustParticles;
@@ -44,10 +45,8 @@ public class Player : MonoBehaviour, IPlayer {
     // Start is called before the first frame update
     void Start() {
         //Initialize
-        _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.useGravity = false;
-        _animator = GetComponentInChildren<Animator>();
-        transform.position = LevelGenerator.StartingPlatform.position + Vector3.up * 0.8f;
+        transform.position = LevelGenerator.StartingPlatform.transform.position + Vector3.up * 0.8f;
 
         //Add to player list
         GameController.Main.Players.Add(this);
@@ -236,7 +235,7 @@ public class Player : MonoBehaviour, IPlayer {
         GameController.Main.GameOver(false);
 
         //Ragdoll
-        GetComponentInChildren<RagDollController>().EnableRagdoll();
+        _ragdoll.EnableRagdoll();
     }
 
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RagDollController : MonoBehaviour
+public class RagdollController : MonoBehaviour
 {
     public Animator Animator;
     public Rigidbody[] Rigidbodies;

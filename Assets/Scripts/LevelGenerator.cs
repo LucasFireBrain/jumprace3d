@@ -6,7 +6,7 @@ using Dreamteck.Splines;
 
 public class LevelGenerator : MonoBehaviour {
     
-    public static Transform StartingPlatform;
+    public static Platform StartingPlatform;
 
     public GameObject PlatformPrefab;
     public GameObject MovingPlatformPrefab;
@@ -18,7 +18,7 @@ public class LevelGenerator : MonoBehaviour {
     public GameObject Spline;
     public Material SplineMaterial;
 
-    private Transform _previousPlatform;
+    private Platform _previousPlatform;
     private Bounds _bounds; //Used to add Bottom platforms below the generated stage
 
     //Generation Parameters
@@ -63,22 +63,22 @@ public class LevelGenerator : MonoBehaviour {
         SplinePoint[] points = new SplinePoint[_platformCount];
 
         for (int i = 0; i < _platformCount; i++) {
-            Transform platform;
+            Platform platform;
 
             if (i != 0 && _dice.Next(0, 100) < 30) {   //30% chance of moving platform
-                platform = Instantiate(MovingPlatformPrefab).transform;
+                platform = Instantiate(MovingPlatformPrefab).GetComponent<Platform>();
             }
             else if (i != 0 && _dice.Next(0, 100) < 30) {   //30% chance after that for breakable platform
                 //breakable platform
-                platform = Instantiate(BreakablePlatformPrefab).transform;
+                platform = Instantiate(BreakablePlatformPrefab).GetComponent<Platform>();
             }
             else {
                 //regular platform
-                platform = Instantiate(PlatformPrefab).transform;
+                platform = Instantiate(PlatformPrefab).GetComponent<Platform>();
             }
             if (_previousPlatform != null) {
                 //Curve Path
-                platform.position = _previousPlatform.position + _previousPlatform.forward * _gapSize;
+                platform.transform.position = _previousPlatform.transform.position + _previousPlatform.transform.forward * _gapSize;
                 int angle = _rand.Next(5, 90);
 
                 //Switch Direction
@@ -87,16 +87,16 @@ public class LevelGenerator : MonoBehaviour {
                 }
                 if (_isCurvedLeft) angle = -angle;  //make angle negative to turn left
 
-                platform.eulerAngles = _previousPlatform.eulerAngles + Vector3.up * angle;
-                _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
+                platform.transform.eulerAngles = _previousPlatform.transform.eulerAngles + Vector3.up * angle;
+                _previousPlatform.Next = platform;
 
-                Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position) / 2;
+                Vector3 midPoint = (platform.transform.position.withY((_platformCount - i) * _slope) + _previousPlatform.transform.position) / 2;
         
                 //Create Blades with 20% chance
                 if (_dice.Next(0, 100) < 20) {
                     GameObject blades = Instantiate(BladesPrefab);
                     blades.transform.position = midPoint;
-                    blades.transform.forward = _previousPlatform.forward;
+                    blades.transform.forward = _previousPlatform.transform.forward;
                 }
 
             }
@@ -106,13 +106,13 @@ public class LevelGenerator : MonoBehaviour {
             }
 
             //Set corresponding progress based on index
-            platform.GetComponent<Platform>().Progress = (float)i / (float)_platformCount;
+            platform.Progress = (float)i / (float)_platformCount;
 
             //Start high up and set goal near the water.
-            platform.position = platform.position.withY((_platformCount - i) * _slope);
+            platform.transform.position = platform.transform.position.withY((_platformCount - i) * _slope);
 
             //Platform Label
-            GameObject label = Instantiate(PlatformLabelPrefab, platform);
+            GameObject label = Instantiate(PlatformLabelPrefab, platform.transform);
             label.GetComponentInChildren<TextMeshPro>().text = (_platformCount - i).ToString();
 
             //Prepare for next iteration
@@ -120,7 +120,7 @@ public class LevelGenerator : MonoBehaviour {
 
             //Spline 
             points[i] = new SplinePoint();
-            points[i].position = _previousPlatform.position;
+            points[i].position = _previousPlatform.transform.position;
             points[i].normal = Vector3.up;
             points[i].size = 0.15f;
             points[i].color = Color.white;
@@ -143,9 +143,9 @@ public class LevelGenerator : MonoBehaviour {
         // Create Goal Platform
         {
             GameObject goal = Instantiate(GoalPrefab);
-            goal.transform.rotation = _previousPlatform.rotation;
-            goal.transform.position = (_previousPlatform.position + _previousPlatform.forward * _gapSize).withY(0);
-            Vector3 midPoint = (goal.transform.position + _previousPlatform.position) / 2;
+            goal.transform.rotation = _previousPlatform.transform.rotation;
+            goal.transform.position = (_previousPlatform.transform.position + _previousPlatform.transform.forward * _gapSize).withY(0);
+            Vector3 midPoint = (goal.transform.position + _previousPlatform.transform.position) / 2;
 
         }
 

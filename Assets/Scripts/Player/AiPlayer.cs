@@ -8,8 +8,8 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     public ParticleSystem DustParticles;
     public Renderer Renderer;
 
-    private Rigidbody _rigidbody;
-    private Animator _animator;
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Animator _animator;
     private Platform _currentPlatform;
 
     private bool _isStarted;
@@ -31,19 +31,12 @@ public class AiPlayer : MonoBehaviour, IPlayer {
 
     // Start is called before the first frame update
     void Start() {
-        _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.useGravity = false;
-
-        _currentPlatform = LevelGenerator.StartingPlatform.GetComponent<Platform>();
+        _currentPlatform = LevelGenerator.StartingPlatform;
         for (int i = 0; i <= AiIndex; i++) {
             _currentPlatform = _currentPlatform.Next;
         }
-
         transform.position = _currentPlatform.transform.position + Vector3.up * 0.8f;
-
-        //_rigidbody.useGravity = false;
-
-        _animator = GetComponentInChildren<Animator>();
         //Set random color
         Renderer.material.SetColor("_Color", Random.ColorHSV());
         AiIndex++;

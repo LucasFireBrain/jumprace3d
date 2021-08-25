@@ -55,12 +55,13 @@ public class Player : MonoBehaviour, IPlayer {
 
     // Update is called once per frame
     void Update() {
-
-        if (_isStarted && !_isDead) MoveAndRotate();                        //Move and Rotate
         if (_isAutoRotate) AutoRotate();                                    //Auto Rotate
         if (Input.GetMouseButton(0)) StopAutoRotate();                      //Stop Auto Rotate
         if (!_isEnteredWater && transform.position.y < -0.1f) EnterWater(); //Fall and die
+    }
 
+    void FixedUpdate() { 
+        if (_isStarted && !_isDead) MoveAndRotate();                        //Move and Rotate
     }
 
     public void StartGame() {

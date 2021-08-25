@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
             GameObject.Destroy(this.gameObject);
             return;
         }
-
+        PlayerPrefs.DeleteAll();
         //Player Prefs
         if (PlayerPrefs.HasKey("CurrentLevel")) {
             CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");

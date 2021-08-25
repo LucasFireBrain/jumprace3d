@@ -17,7 +17,6 @@ public class LevelGenerator : MonoBehaviour {
     public GameObject GoalPrefab;
     public GameObject Spline;
     public Material SplineMaterial;
-    public LineRenderer Line;
 
     private Transform _previousPlatform;
     private Bounds _bounds; //Used to add Bottom platforms below the generated stage
@@ -60,8 +59,6 @@ public class LevelGenerator : MonoBehaviour {
 
     void GenerateLevel() {
 
-        Line.positionCount = _platformCount * 2 + 1;    // plus 1 is the Goal Platform // times 2 is for the midPoints
-
         SplineComputer splineComputer = Spline.AddComponent<SplineComputer>();
         SplinePoint[] points = new SplinePoint[_platformCount];
 
@@ -93,13 +90,8 @@ public class LevelGenerator : MonoBehaviour {
                 platform.eulerAngles = _previousPlatform.eulerAngles + Vector3.up * angle;
                 _previousPlatform.GetComponent<Platform>().Next = platform.GetComponent<Platform>();
 
-                //Line renderer
-                //Line.SetPosition(2 * i - 2, _previousPlatform.position);
                 Vector3 midPoint = (platform.position.withY((_platformCount - i) * _slope) + _previousPlatform.position) / 2;
-                //Line.SetPosition(2 * i - 1, midPoint);
-
-                
-
+        
                 //Create Blades with 20% chance
                 if (_dice.Next(0, 100) < 20) {
                     GameObject blades = Instantiate(BladesPrefab);
@@ -154,9 +146,7 @@ public class LevelGenerator : MonoBehaviour {
             goal.transform.rotation = _previousPlatform.rotation;
             goal.transform.position = (_previousPlatform.position + _previousPlatform.forward * _gapSize).withY(0);
             Vector3 midPoint = (goal.transform.position + _previousPlatform.position) / 2;
-            Line.SetPosition(Line.positionCount - 3, _previousPlatform.position);
-            Line.SetPosition(Line.positionCount - 2, midPoint);
-            Line.SetPosition(Line.positionCount - 1, goal.transform.position);
+
         }
 
         //Set Spline Points

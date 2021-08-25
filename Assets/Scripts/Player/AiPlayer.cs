@@ -55,7 +55,10 @@ public class AiPlayer : MonoBehaviour, IPlayer {
     public void BounceUp() {
         //Apply force upwards.
         _rigidbody.velocity = Vector3.up * _jumpHeight;
-        _animator.Play("Flip_01");
+        if (Random.Range(0, 2) == 0) {
+            _animator.Play("Flip_01");
+        }
+        else _animator.Play("Flip_02");
     }
 
     // Use FixedUpdate to better handle physics.

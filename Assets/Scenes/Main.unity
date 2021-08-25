@@ -5532,7 +5532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7808024054486956060, guid: ed091f01e9c42be46bde10e62c6afab6, type: 3}
       propertyPath: m_Name
-      value: Yoghurt
+      value: Moshi
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed091f01e9c42be46bde10e62c6afab6, type: 3}
